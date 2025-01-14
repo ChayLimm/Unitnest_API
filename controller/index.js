@@ -1,4 +1,5 @@
-const { handleMessage , handleCallbackQuery} = require("./lib/Telegram");
+const { handleMessage , handleCallbackQuery} = require("./lib/telegram/Telegram");
+const { handleRequestBakong } = require("./lib/khqr/khqr");
 
 async function handler(req,method){
     const {body} = req;
@@ -11,6 +12,10 @@ async function handler(req,method){
         if (body.callback_query) {
             const callbackQuery = body.callback_query;
             await handleCallbackQuery(callbackQuery);
+        }
+        if(body.amount){
+            console.log("handling");
+            await handleRequestBakong(body.amount);
         }
     }
 

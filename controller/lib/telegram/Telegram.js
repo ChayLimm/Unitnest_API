@@ -1,4 +1,4 @@
-const { axiosInstance } = require("./axios");
+const { axiosInstance } = require("../axios");
 
 const payButton =  [{ text: "Pay Now", callback_data: "pay" }];
 const ruleButotn = [{text: "Rules", callback_data: "rule"}];
