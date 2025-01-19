@@ -17,13 +17,15 @@ function sendMessage(messageObj,messageText,button = null){
               }),       
         })
     }else
-    {console.log("sending message without button")
+    {
+        console.log("sending message without button")
         return axiosInstance.get("sendMessage",{
             chat_id : messageObj.chat.id,
             text: messageText,
         });
                
-}}
+ }
+}
 
 async function handleCallbackQuery(callback_query) {
     const chatId = callback_query.message.chat.id;

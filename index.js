@@ -15,13 +15,42 @@ app.post("/telegram", async (req, res) => {
 });
 
 app.post("/khqr", async (req, res) => {
-    console.log(req.body);
-    res.send(await handler(req));
+    console.log(req.body); 
+    const amount = req.body.amount;   
+
+    if (!amount) {
+        return res.status(400).json({ error: "Amount is required" }); 
+    }
+    if (isNaN(amount) || amount <= 0) {
+        return res.status(400).json({ error: "Invalid amount provided, must be higher than 0" });
+    }
+
+    try {
+        await handler(req, res);
+    } catch (error) {
+        console.error("Error in /khqr:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
-app.get("*", async (req, res) => {
-    res.send("Hello get");
-});
+// check the payment status tha pay or nv
+app.post("/khqrstatus", async(req,res)=>{
+    console.log(req.body);
+    const md5 = req.body.md5;
+    if (!md5) {
+        return res.status(400).json({ error: "md5 is required" }); 
+    }
+    try {
+        await handler(req, res);
+    } catch (error) {
+        console.error("Error in /khqr:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+
+})
+
+
+
 
 // Start the server
 app.listen(PORT, function (err) {

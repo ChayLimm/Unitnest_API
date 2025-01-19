@@ -1,7 +1,7 @@
 const { handleMessage , handleCallbackQuery} = require("./lib/telegram/Telegram");
-const { handleRequestBakong } = require("./lib/khqr/khqr");
+const { handleRequestBakong ,handleKHQRstatus} = require("./lib/khqr/khqr");
 
-async function handler(req,method){
+async function handler(req,res,method){
     const {body} = req;
     if (body) {
         if (body.message) {
@@ -14,8 +14,12 @@ async function handler(req,method){
             await handleCallbackQuery(callbackQuery);
         }
         if(body.amount){
-            console.log("handling");
-            await handleRequestBakong(body.amount);
+            console.log(body.amount);
+            await handleRequestBakong(body.amount,res);
+        }
+        if(body.md5){
+            console.log(body.md5);
+            await handleKHQRstatus(body.md5,res);
         }
     }
 
