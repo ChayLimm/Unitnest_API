@@ -3,7 +3,7 @@ const axios = require("axios");
 const PORT = process.env.PORT || 4040;
 const { handler } = require("./controller");
 
-const BOT_TOKEN = '7731519842:AAEEAnhShMTmCX6fseR5CsERyVvt-t-63n4';
+const BOT_TOKEN = '7906784409:AAFXwfLXl49tMyS0ZdqMliTGmO2p-R174_U';
 const WEBHOOK_URL = 'https://3c49-103-16-61-182.ngrok-free.app/telegram';
 
 const app = express();
