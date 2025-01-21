@@ -48,7 +48,10 @@ function handleRequestBakong(amount,res) {
         const QRCode = require('qrcode');
         const fs = require('fs');
 
+        const decodeValue = BakongKHQR.decode(individual.data.qr)
+
         res.json({ 
+            Decode : decodeValue,
             QR: individual.data.qr,
             MD5: individual.data.md5 
         });
