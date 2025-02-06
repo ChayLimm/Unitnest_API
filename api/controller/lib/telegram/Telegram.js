@@ -9,7 +9,7 @@ const yesButton = [{text: "Yes", callback_data: "yes"}];
 const noButton = [{text: "No", callback_data: "no"}];
 
 const registrationSteps = {}; // memory to track user registration steps
-const tenantsFilePath = './tenants,json';
+const tenantsFilePath = `./tenants,json`;
 
 function sendMessage(messageObj,messageText,button = null){
     var messsageObj1;
