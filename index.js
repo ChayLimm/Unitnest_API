@@ -4,7 +4,7 @@ const PORT = process.env.PORT || 4040;
 const { handler } = require("./controller");
 
 const BOT_TOKEN = '7906784409:AAHfQi0SYgnp1AInLHRYzdrtFHS7nyzP4M4';
-const WEBHOOK_URL = 'https://161f-103-16-62-134.ngrok-free.app/telegram';
+const WEBHOOK_URL = 'https://e-unitnest-api.vercel.app/telegram';
 
 const app = express();
 app.use(express.json());
