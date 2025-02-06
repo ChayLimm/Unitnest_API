@@ -175,7 +175,7 @@ function saveTenantsRegistration(newTenant) {
         let tenants = [];
         if (fs.existsSync(tenantsFilePath)) {
             const data = fs.readFileSync(tenantsFilePath, 'utf-8');
-            tenants = JSON.parse(data);
+            tenants = data ? JSON.parse(data) : [];
         }
         tenants.push(newTenant);
         fs.writeFileSync(tenantsFilePath, JSON.stringify(tenants, null, 2));
