@@ -4,10 +4,14 @@ const PORT = process.env.PORT || 4040;
 const { handler } = require("./controller");
 
 const BOT_TOKEN = '7906784409:AAHfQi0SYgnp1AInLHRYzdrtFHS7nyzP4M4';
-const WEBHOOK_URL = 'https://b1f9-103-16-61-182.ngrok-free.app/telegram';
+const WEBHOOK_URL = 'https://161f-103-16-62-134.ngrok-free.app/telegram';
 
 const app = express();
 app.use(express.json());
+
+app.get('/test', (req, res) => {
+    res.send('hello');
+  });
 
 app.post("/telegram", async (req, res) => {
     console.log(req.body);

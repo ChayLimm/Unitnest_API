@@ -6,6 +6,12 @@ const yesButton = [{text: "Yes", callback_data: "yes"}];
 const noButton = [{text: "No", callback_data: "no"}];
 
 function sendMessage(messageObj,messageText,button = null){
+    var messsageObj1;
+    if(messageObj.callback_query){
+        messsageObj1 = messageObj.message
+    }else {
+        messageObj1 = messageObj;
+    }
 
     if(button != null){
         console.log("sending message with button")
@@ -24,8 +30,7 @@ function sendMessage(messageObj,messageText,button = null){
             text: messageText,
         });
                
- }
-}
+ }}
 
 async function handleCallbackQuery(callback_query) {
     const chatId = callback_query.message.chat.id;
