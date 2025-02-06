@@ -194,12 +194,17 @@ function checkTenantsRegistered(chat_id) {
 
 function saveTenantsRegistration(newTenant) {
     try {
-        const data = fs.readFileSync('./tenants.json', 'utf-8');
-        const tenants = JSON.parse(data);
+        // Check if the file exists, if not, create it with an empty array
+        let tenants = [];
+        if (fs.existsSync('./tenants.json')) {
+            const data = fs.readFileSync('./tenants.json', 'utf-8');
+            tenants = JSON.parse(data);
+        }
         tenants.push(newTenant);
         fs.writeFileSync('./tenants.json', JSON.stringify(tenants, null, 2));
+        console.log('Tenant registration saved successfully.');
     } catch (err) {
-        console.error('Error reading file:', err);
+        console.error('Error saving tenant registration:', err);
     }
 }
 
