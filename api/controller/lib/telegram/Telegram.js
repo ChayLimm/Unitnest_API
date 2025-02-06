@@ -11,12 +11,12 @@ const noButton = [{text: "No", callback_data: "no"}];
 const registrationSteps = {}; // memory to track user registration steps
 
 function sendMessage(messageObj,messageText,button = null){
-    // var messsageObj1;
-    // if(messageObj.callback_query){
-    //     messsageObj1 = messageObj.message
-    // }else {
-    //     messageObj1 = messageObj;
-    // }
+    var messsageObj1;
+    if(messageObj.callback_query){
+        messsageObj1 = messageObj.message
+    }else {
+        messageObj1 = messageObj;
+    }
 
     if(button != null){
         console.log("sending message with button")
@@ -90,30 +90,6 @@ function handleMessage(messageObj){
         }
     }
 
-    // // handle group messages
-    // if (messageObj.chat.type === 'group' || messageObj.chat.type === 'supergroup') {
-    //     console.log(`Message received in group: ${messageText}`);    
-    //     if (messageText === "hello") {
-    //         sendMessage(
-    //             messageObj,
-    //             "Hello group! How can I assist you today?"
-    //         );
-    //     } else {
-    //         sendMessage(
-    //             messageObj,
-    //             "Sorry, I don't understand that."
-    //         );
-    //     }
-    // }else { 
-    //     switch (messageObj.text){
-    //         case "hello":
-    //             return sendMessage(messageObj, "hello there!");
-                
-    //         default:
-    //             return sendMessage(messageObj,"Sorry, i do not understand");
-    //     }
-    // }
-
     // Handle Registration Steps-Flow
     if (registrationSteps[chatId]) {
         return registrationFlow(messageObj);
@@ -160,7 +136,7 @@ const registrationSchema = Joi.object({
 
     phone: Joi.string()
         .trim()
-        .pattern(/^\d{9,10}$/)
+        .pattern(/^\d$/)
         .required()
         .messages({
             "string.pattern.base": "Phone number must be a 9/10 digits number.",
@@ -168,7 +144,7 @@ const registrationSchema = Joi.object({
     
     idIdentification: Joi.string()
         .trim()
-        .pattern(/^\d{10,12}$/)
+        .pattern(/^\d$/)
         .required()
         .messages({
             "string.pattern.base": "ID card number must be a 10/12 digits number.",
@@ -222,7 +198,6 @@ async function registrationFlow(messageObj) {
             if (nameErr) return sendMessage(messageObj, "Invalid Name, pls re-enter:\nExample: Jonh Doe");
             
             registrationSteps[chatId].name = validName.name; // Store cleaned-up name
-            // registrationSteps[chatId].name = msgText;
             registrationSteps[chatId].step = 2;
             return sendMessage(messageObj, "Enter your phone number:\nExample: 012345678");
 
@@ -244,6 +219,14 @@ async function registrationFlow(messageObj) {
             // registrationSteps[chatId].id_Identification = msgText;
             registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
             registrationSteps[chatId].registration_date = new Date().toLocaleDateString()
+            // print user info after register
+            const userInfo = `
+                Here is the information you provided:
+                Name: ${registrationSteps[chatId].name}
+                Phone: ${registrationSteps[chatId].phone}
+                ID Card: ${registrationSteps[chatId].id_Identification}
+                Registration Successful!
+            `;
 
             // Save the data after all steps are complete
             const tenant = {
@@ -261,7 +244,7 @@ async function registrationFlow(messageObj) {
 
             return sendMessage(
                 messageObj,
-                "Welcome! Your registration is successful.Here are the options that u can proceed with.",
+                userInfo,
                 [payButton, ruleButton]
             );
 
