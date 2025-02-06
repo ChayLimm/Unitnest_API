@@ -5,7 +5,7 @@ const serverless = require("serverless-http");
 const { handler } = require("./controller");
 
 const BOT_TOKEN = '7906784409:AAHfQi0SYgnp1AInLHRYzdrtFHS7nyzP4M4';
-const WEBHOOK_URL = 'https://e-unitnest-api.vercel.app/telegram';
+const WEBHOOK_URL = 'https://unitnest-api.vercel.app/telegram';
 
 const app = express();
 app.use(express.json());
