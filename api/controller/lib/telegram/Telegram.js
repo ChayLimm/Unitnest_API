@@ -9,6 +9,7 @@ const yesButton = [{text: "Yes", callback_data: "yes"}];
 const noButton = [{text: "No", callback_data: "no"}];
 
 const registrationSteps = {}; // memory to track user registration steps
+const tenantsFilePath = './tenants,json';
 
 function sendMessage(messageObj,messageText,button = null){
     var messsageObj1;
@@ -154,7 +155,7 @@ const registrationSchema = Joi.object({
 
 function checkTenantsRegistered(chat_id) {
     try {
-        const data = fs.readFileSync('./tenants.json', 'utf-8');
+        const data = fs.readFileSync(tenantsFilePath, 'utf-8');
         const tenants = JSON.parse(data); // Get arrays data (object)
         for (let i = 0; i < tenants.length; i++) {
             if (tenants[i].chatId === chat_id) {
@@ -172,12 +173,12 @@ function saveTenantsRegistration(newTenant) {
     try {
         // Check if the file exists, if not, create it with an empty array
         let tenants = [];
-        if (fs.existsSync('./tenants.json')) {
-            const data = fs.readFileSync('./tenants.json', 'utf-8');
+        if (fs.existsSync(tenantsFilePath)) {
+            const data = fs.readFileSync(tenantsFilePath, 'utf-8');
             tenants = JSON.parse(data);
         }
         tenants.push(newTenant);
-        fs.writeFileSync('./tenants.json', JSON.stringify(tenants, null, 2));
+        fs.writeFileSync(tenantsFilePath, JSON.stringify(tenants, null, 2));
         console.log('Tenant registration saved successfully.');
     } catch (err) {
         console.error('Error saving tenant registration:', err);
