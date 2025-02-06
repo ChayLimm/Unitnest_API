@@ -139,7 +139,7 @@ const registrationSchema = Joi.object({
         .pattern(/^\d$/)
         .required()
         .messages({
-            "string.pattern.base": "Phone number must be a 9/10 digits number.",
+            "string.pattern.base": "Phone number must be a digits number.",
         }),
     
     idIdentification: Joi.string()
@@ -147,7 +147,7 @@ const registrationSchema = Joi.object({
         .pattern(/^\d$/)
         .required()
         .messages({
-            "string.pattern.base": "ID card number must be a 10/12 digits number.",
+            "string.pattern.base": "ID card number must be a digits number.",
         }),
 
 });
@@ -219,6 +219,7 @@ async function registrationFlow(messageObj) {
             // registrationSteps[chatId].id_Identification = msgText;
             registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
             registrationSteps[chatId].registration_date = new Date().toLocaleDateString()
+            
             // print user info after register
             const userInfo = `
                 Here is the information you provided:
