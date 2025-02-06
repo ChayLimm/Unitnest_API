@@ -203,9 +203,12 @@ async function registrationFlow(messageObj) {
 
         case 2:
             // Validate phone number
-            const { error: phoneErr, value: validPhone } = Joi.object({ phone: registrationSchema.extract("phone")}).validate({ phone: msgText });
-            if (phoneErr) return sendMessage(messageObj, "Invalid Phone number, pls re-enter:\nExample: 012345678");
-
+            const { error: phoneErr, value: validPhone } = Joi.object({ phone: registrationSchema.extract("phone") }).validate({ phone: msgText });
+            
+            if (phoneErr) {
+                console.error("Phone validation error:", phoneErr); // Log validation error for debugging
+                return sendMessage(messageObj, "Invalid Phone number, pls re-enter:\nExample: 012345678");
+            }
             // registrationSteps[chatId].phone = msgText;
             registrationSteps[chatId].phone = validPhone.phone;
             registrationSteps[chatId].step = 3;
