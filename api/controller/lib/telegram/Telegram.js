@@ -4,18 +4,19 @@ const Joi = require("joi");
 
 const payButton =  [{ text: "Pay Now", callback_data: "pay" }];
 const ruleButton = [{text: "Rules", callback_data: "rule"}];
+const registerButton = [{ text: "Register", callback_data: "register" }];
 const yesButton = [{text: "Yes", callback_data: "yes"}];
 const noButton = [{text: "No", callback_data: "no"}];
 
 const registrationSteps = {}; // memory to track user registration steps
 
 function sendMessage(messageObj,messageText,button = null){
-    var messsageObj1;
-    if(messageObj.callback_query){
-        messsageObj1 = messageObj.message
-    }else {
-        messageObj1 = messageObj;
-    }
+    // var messsageObj1;
+    // if(messageObj.callback_query){
+    //     messsageObj1 = messageObj.message
+    // }else {
+    //     messageObj1 = messageObj;
+    // }
 
     if(button != null){
         console.log("sending message with button")
