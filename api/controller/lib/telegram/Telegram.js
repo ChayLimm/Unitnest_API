@@ -3,7 +3,7 @@ const fs = require("fs");
 const Joi = require("joi");
 
 const payButton =  [{ text: "Pay Now", callback_data: "pay" }];
-const ruleButotn = [{text: "Rules", callback_data: "rule"}];
+const ruleButton = [{text: "Rules", callback_data: "rule"}];
 const yesButton = [{text: "Yes", callback_data: "yes"}];
 const noButton = [{text: "No", callback_data: "no"}];
 
@@ -57,7 +57,7 @@ async function handleCallbackQuery(callback_query) {
     }
 }
 
-async function handleMessage(messageObj){
+function handleMessage(messageObj){
     const chatId = messageObj.chat.id;
     const messageText = messageObj.text || " ";
 
@@ -68,7 +68,7 @@ async function handleMessage(messageObj){
         const command = messageText.substr(1);
         switch (command) {
             case "start":
-                const isRegistered = await checkTenantsRegistered(messageObj.chat.id);
+                const isRegistered = checkTenantsRegistered(messageObj.chat.id);
                 if (isRegistered) {
                     return sendMessage(
                         messageObj,
@@ -82,10 +82,14 @@ async function handleMessage(messageObj){
                         [registerButton]
                     );
                 }
+            case "help":
+                return sendMessage(messageObj, 'Help Info');
             default:
                 return sendMessage(messageObj, "Sorry, I do not understand.");
         }
     }
+
+    // handle group messages
     if (messageObj.chat.type === 'group' || messageObj.chat.type === 'supergroup') {
         console.log(`Message received in group: ${messageText}`);    
         if (messageText === "hello") {
@@ -109,7 +113,7 @@ async function handleMessage(messageObj){
         }
     }
 
-    // Handle Registration Steps
+    // Handle Registration Steps-Flow
     if (registrationSteps[chatId]) {
         return registrationFlow(messageObj);
     }
@@ -171,7 +175,7 @@ const registrationSchema = Joi.object({
 
 });
 
-async function checkTenantsRegistered(chat_id) {
+function checkTenantsRegistered(chat_id) {
     try {
         const data = fs.readFileSync('./tenants.json', 'utf-8');
         const tenants = JSON.parse(data); // Get arrays data (object)
