@@ -203,13 +203,11 @@ async function registrationFlow(messageObj) {
 
         case 2:
             // Validate phone number
-            const { error: phoneErr, value: validPhone } = Joi.object({ phone: registrationSchema.extract("phone") }).validate({ phone: msgText });
+            const { error: phoneErr, value: validPhone } = Joi.object({ phone: registrationSchema.extract("phone")}).validate({ phone: msgText });
             
-            if (phoneErr) {
-                console.error("Phone validation error:", phoneErr); // Log validation error for debugging
-                return sendMessage(messageObj, "Invalid Phone number, pls re-enter:\nExample: 012345678");
-            }
-            // registrationSteps[chatId].phone = msgText;
+            if (phoneErr) return sendMessage(messageObj, "Invalid Phone number, pls re-enter:\nExample: 012345678");
+
+            // Store valid phone number
             registrationSteps[chatId].phone = validPhone.phone;
             registrationSteps[chatId].step = 3;
             return sendMessage(messageObj, "Enter your ID Identification number:\nExample: 1234567890");
@@ -217,22 +215,17 @@ async function registrationFlow(messageObj) {
         case 3:
             // Validate ID card number
             const { error: idIdentifyErr, value: validIdentify } = Joi.object({ idIdentification: registrationSchema.extract("idIdentification")}).validate({ idIdentification: msgText });
-            if (idIdentifyErr) return sendMessage(messageObj, "Invalid ID Identify number, pls re-enter:\nExample: 1234567890");
-
-            // registrationSteps[chatId].id_Identification = msgText;
-            registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
-            registrationSteps[chatId].registration_date = new Date().toLocaleDateString()
             
-            // print user info after register
-            const userInfo = `
-                Here is the information you provided:
-                Name: ${registrationSteps[chatId].name}
-                Phone: ${registrationSteps[chatId].phone}
-                ID Card: ${registrationSteps[chatId].id_Identification}
-                Registration Successful!
-            `;
+            if (idIdentifyErr) return sendMessage(messageObj, "Invalid ID Identification number, pls re-enter:\nExample: 1234567890");
 
-            // Save the data after all steps are complete
+            // Store valid ID card number
+            registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
+            registrationSteps[chatId].registration_date = new Date().toLocaleDateString();
+            
+            // Print user info after registration is successful
+            const userInfo = `Here is the information you provided:\nName: ${registrationSteps[chatId].name}\nPhone: ${registrationSteps[chatId].phone}\nID Card: ${registrationSteps[chatId].id_Identification}\nRegistration Successful!`;
+
+            // Save the tenant data to file
             const tenant = {
                 chatId: chatId,
                 name: registrationSteps[chatId].name,
@@ -244,23 +237,21 @@ async function registrationFlow(messageObj) {
             // Save tenant data to file
             saveTenantsRegistration(tenant);
 
-            delete registrationSteps[chatId]; // Clear data from memory
+            // Clear registration data from memory
+            delete registrationSteps[chatId];
 
-            return sendMessage(
-                messageObj,
-                userInfo,
-                [payButton, ruleButton]
-            );
+            return sendMessage(messageObj, userInfo, [payButton, ruleButton]);
+
+        default:
+            return sendMessage(messageObj, "Sorry, I don't understand.");
+    }
+}
+
 
             // return sendMessage(
             //     messageObj,
             //     "Please waiting for landlord to approve your registration.",
             //     []
             // );
-
-        default:
-            return sendMessage(messageObj, "Sorry, I don't understand.");
-    }
-}
 
 module.exports= {handleMessage, handleCallbackQuery};
