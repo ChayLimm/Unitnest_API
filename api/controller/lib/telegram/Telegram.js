@@ -90,29 +90,29 @@ function handleMessage(messageObj){
         }
     }
 
-    // handle group messages
-    if (messageObj.chat.type === 'group' || messageObj.chat.type === 'supergroup') {
-        console.log(`Message received in group: ${messageText}`);    
-        if (messageText === "hello") {
-            sendMessage(
-                messageObj,
-                "Hello group! How can I assist you today?"
-            );
-        } else {
-            sendMessage(
-                messageObj,
-                "Sorry, I don't understand that."
-            );
-        }
-    }else { 
-        switch (messageObj.text){
-            case "hello":
-                return sendMessage(messageObj, "hello there!");
+    // // handle group messages
+    // if (messageObj.chat.type === 'group' || messageObj.chat.type === 'supergroup') {
+    //     console.log(`Message received in group: ${messageText}`);    
+    //     if (messageText === "hello") {
+    //         sendMessage(
+    //             messageObj,
+    //             "Hello group! How can I assist you today?"
+    //         );
+    //     } else {
+    //         sendMessage(
+    //             messageObj,
+    //             "Sorry, I don't understand that."
+    //         );
+    //     }
+    // }else { 
+    //     switch (messageObj.text){
+    //         case "hello":
+    //             return sendMessage(messageObj, "hello there!");
                 
-            default:
-                return sendMessage(messageObj,"Sorry, i do not understand");
-        }
-    }
+    //         default:
+    //             return sendMessage(messageObj,"Sorry, i do not understand");
+    //     }
+    // }
 
     // Handle Registration Steps-Flow
     if (registrationSteps[chatId]) {
