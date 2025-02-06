@@ -136,7 +136,7 @@ const registrationSchema = Joi.object({
 
     phone: Joi.string()
         .trim()
-        .pattern(/^\d$/)
+        .pattern(/^\d{9,15}$/)
         .required()
         .messages({
             "string.pattern.base": "Phone number must be a digits number.",
@@ -144,7 +144,7 @@ const registrationSchema = Joi.object({
     
     idIdentification: Joi.string()
         .trim()
-        .pattern(/^\d$/)
+        .pattern(/^\d{9,15}$/)
         .required()
         .messages({
             "string.pattern.base": "ID card number must be a digits number.",
