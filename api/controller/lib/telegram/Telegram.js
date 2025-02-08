@@ -11,7 +11,7 @@ const noButton = [{text: "No", callback_data: "no"}];
 const registrationSteps = {}; // memory to track user registration steps
 const tenantsFilePath = `./tenants,json`;
 
-function sendMessage(messageObj,messageText,button = null){
+function sendMessage(messageObj,messageText,button = null, photo = null){
     var messsageObj1;
     if(messageObj.callback_query){
         messsageObj1 = messageObj.message
@@ -27,6 +27,13 @@ function sendMessage(messageObj,messageText,button = null){
             reply_markup: JSON.stringify({
                 inline_keyboard: button,
               }),       
+        })
+    }else if (photo != null){
+        console.log("Sending message photo")
+        return axiosInstance.get("sendMessage",{
+            chat_id: messageObj.chat.id,
+            photo: photo,   // fild id / url of photo => array of photo
+            caption: messageText, // optional
         })
     }else{
         console.log("sending message without button")
@@ -97,6 +104,9 @@ function handleMessage(messageObj){
     }
 
     // Handle Image Processing for payment
+    if (messageObj.photo) {
+        
+    }
     
 }
 
@@ -106,10 +116,9 @@ function formatValidName(value, helpers) {
                 .replace(/\s+/g, " ") // Replace multiple spaces with a single space
                 .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
 
-        // Handle empty name
         if (!validName) return helpers.error("any.invalid");
 
-        // Corrected regex pattern to allow full names with spaces
+        // regex pattern to allow full names with spaces
         const namePattern = /^[a-zA-Z\u00C0-\u00FF' ]+$/;
         if (!namePattern.test(validName)) return helpers.error("any.invalid");
 
@@ -118,7 +127,6 @@ function formatValidName(value, helpers) {
         let nameParts = validName.split(/\s+/).map(part => part.replace(/'s$/, ""));
         let filteredName = nameParts.filter(part => !nameIndicators.includes(part.toLowerCase())).join(" ");
 
-        // Ensure filteredName is still valid
         if (!filteredName.trim()) return helpers.error("any.invalid");
 
     return filteredName;  // Return the correctly validated name
@@ -193,9 +201,7 @@ async function registrationFlow(messageObj) {
     switch (step) {
         case 1:
             // Validate name
-            const { error: nameErr, value: validName } = Joi.object({ name: registrationSchema.extract("name") })
-            .validate({ name: msgText });
-        
+            const { error: nameErr, value: validName } = Joi.object({ name: registrationSchema.extract("name") }).validate({ name: msgText });
             if (nameErr) return sendMessage(messageObj, "Invalid Name, pls re-enter:\nExample: Jonh Doe");
             
             registrationSteps[chatId].name = validName.name; // Store cleaned-up name
@@ -205,7 +211,6 @@ async function registrationFlow(messageObj) {
         case 2:
             // Validate phone number
             const { error: phoneErr, value: validPhone } = Joi.object({ phone: registrationSchema.extract("phone")}).validate({ phone: msgText });
-            
             if (phoneErr) return sendMessage(messageObj, "Invalid Phone number, pls re-enter:\nExample: 012345678");
 
             // Store valid phone number
@@ -216,7 +221,6 @@ async function registrationFlow(messageObj) {
         case 3:
             // Validate ID card number
             const { error: idIdentifyErr, value: validIdentify } = Joi.object({ idIdentification: registrationSchema.extract("idIdentification")}).validate({ idIdentification: msgText });
-            
             if (idIdentifyErr) return sendMessage(messageObj, "Invalid ID Identification number, pls re-enter:\nExample: 1234567890");
 
             // Store valid ID card number
@@ -248,11 +252,17 @@ async function registrationFlow(messageObj) {
     }
 }
 
+async function handlePhotoReqPay(msgObj) {
+    const chat_id = msgObj.chat.id;
+    // const photo = msgObj.photo.length
+}
+
+
+module.exports= {handleMessage, handleCallbackQuery};
+
 
             // return sendMessage(
             //     messageObj,
             //     "Please waiting for landlord to approve your registration.",
             //     []
             // );
-
-module.exports= {handleMessage, handleCallbackQuery};
