@@ -1,5 +1,4 @@
-require('dotenv').config({ path: __dirname + '/../.env' });
-__dirname = 'api/index.js';
+require('dotenv').config({ path: '/../.env' });
 const express = require("express");
 const axios = require("axios");
 const serverless = require("serverless-http");

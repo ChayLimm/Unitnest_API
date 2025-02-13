@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '/../.env' });
 const axios = require("axios"); // Fixed 'rquire' typo
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
