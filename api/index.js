@@ -1,10 +1,12 @@
+require('dotenv').config();
 const express = require("express");
 const axios = require("axios");
 const serverless = require("serverless-http");
 
 const { handler } = require("./controller/handler");
 
-const BOT_TOKEN = '7906784409:AAHfQi0SYgnp1AInLHRYzdrtFHS7nyzP4M4';
+// const BOT_TOKEN = '7906784409:AAHfQi0SYgnp1AInLHRYzdrtFHS7nyzP4M4';
+const BOT_TOKEN = process.env.BOT_TOKEN;
 const WEBHOOK_URL = 'https://unitnest-api.vercel.app/telegram';
 
 const app = express();

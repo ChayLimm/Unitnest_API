@@ -9,7 +9,7 @@ const yesButton = [{text: "Yes", callback_data: "yes"}];
 const noButton = [{text: "No", callback_data: "no"}];
 
 const registrationSteps = {}; // memory to track user registration steps
-const tenantsFilePath = `./tenants,json`;
+// const tenantsFilePath = `./tenants,json`;
 
 function sendMessage(messageObj,messageText,button = null, photo = null){
     var messsageObj1;
@@ -30,7 +30,7 @@ function sendMessage(messageObj,messageText,button = null, photo = null){
         })
     }else if (photo != null){
         console.log("Sending message photo")
-        return axiosInstance.get("sendMessage",{
+        return axiosInstance.get("sendPhoto",{
             chat_id: messageObj.chat.id,
             photo: photo,   // fild id / url of photo => array of photo
             caption: messageText, // optional
@@ -69,6 +69,7 @@ async function handleCallbackQuery(callback_query) {
 function handleMessage(messageObj){
     const chatId = messageObj.chat.id;
     const messageText = messageObj.text || " ";
+    const messagePhoto = messageObj.photo;
 
     console.log(messageObj);
 
@@ -104,7 +105,7 @@ function handleMessage(messageObj){
     }
 
     // Handle Image Processing for payment
-    if (messageObj.photo) {
+    if (messagePhoto) {
         
     }
     

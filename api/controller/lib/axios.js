@@ -1,6 +1,8 @@
+require('dotenv').config();
 const axios = require("axios"); // Fixed 'rquire' typo
 
-const BOT_TOKEN = "7906784409:AAHfQi0SYgnp1AInLHRYzdrtFHS7nyzP4M4";
+// const BOT_TOKEN = "7906784409:AAHfQi0SYgnp1AInLHRYzdrtFHS7nyzP4M4";
+const BOT_TOKEN = process.env.BOT_TOKEN;
 const Base_URL = `https://api.telegram.org/bot${BOT_TOKEN}`; 
 
 function getAxiosInstance() { 
