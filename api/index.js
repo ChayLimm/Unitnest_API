@@ -1,5 +1,5 @@
-// require('dotenv').config({ path: '/../.env' });
-require('dotenv').config();
+require('dotenv').config({ path: '/../.env' });
+// require('dotenv').config();
 const express = require("express");
 const axios = require("axios");
 const serverless = require("serverless-http");
