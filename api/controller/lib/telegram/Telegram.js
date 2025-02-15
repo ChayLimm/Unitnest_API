@@ -11,6 +11,15 @@ const noButton = [{text: "No", callback_data: "no"}];
 const registrationSteps = {}; // track user registration steps
 const paymentRequestSteps = {}; // track users expecting payment images
 
+function clearSteps(chatId) {
+    if (registrationSteps[chatId]) {
+        delete registrationSteps[chatId];
+    }
+    if (paymentRequestSteps[chatId]) {
+        delete paymentRequestSteps[chatId];
+    }
+}
+
 // const tenantsFilePath = `./tenants,json`;
 
 function sendMessage(messageObj,messageText,button = null, photo = null){
@@ -52,17 +61,11 @@ async function handleCallbackQuery(callback_query) {
 
     switch (data) {
         case "pay":
-            paymentRequestSteps[msgObj.chat.id] = { step: 1, chat_id: msgObj.chat.id };
-            return sendMessage(msgObj, "Please send image of Water meter and Electricity meter usage of this month");
+            paymentRequestSteps[msgObj.chat.id] = { step: 1, chat_id: msgObj.chat.id}
+            return sendMessage(msgObj, `Please upload photos for request payment:\n- Water Meter\n- Electricity Meter`);
         
         case "rule":
-            const ruleMessage = `
-                                កំណត់សម្គាល់.\n\n
-                                1. រាល់ការបង់ប្រាក់យឺតលើសពី 5 ថ្ងៃនៃថ្ងៃកំណត់ (ថ្ងៃទី 1 ដើមខែ) នឹងត្រូវពិន័យមួយថ្ងៃ 3 ដុល្លារ។\n
-                                2. ត្រូវបង់ប្រាក់បន្ទប់,ទឹក,ភ្លើងរាល់ថ្ងៃដើមខែដោយភ្ជាប់មកជាមួយបង្កាន់ដៃមួយសន្លឹក។\n
-                                3. ត្រូវធ្វើការផ្លាស់ប្ដូរសម្ភារៈក្នុងបន្ទប់ដែលខូចក្នុងអំឡុងពេលស្នាក់នៅដោយខ្លួនឯង។\n
-                                4. ត្រូវជូនដំណឹងដល់ម្ចាស់បន្ទប់យ៉ាងតិចណាស់ 15 ថ្ងៃមុននឹងបញ្ឈប់ការជួលនិងសម្អាតបន្ទប់ឲ្យបានស្អាតមុននឹងចាកចេញបើមិនដូច្នេះទេម្ចាស់បន្ទប់មានសិទ្ធិកាត់ប្រាក់កក់ចំនួន 20 ដុល្លាររបស់លោកអ្នក។\n
-                                5. ត្រូវគោរពបទបញ្ជាផ្ទៃក្នុងរបស់បន្ទប់ជួល។`;
+            const ruleMessage = `កំណត់សម្គាល់.\n\n1. រាល់ការបង់ប្រាក់យឺតលើសពី 5 ថ្ងៃនៃថ្ងៃកំណត់ (ថ្ងៃទី 1 ដើមខែ) នឹងត្រូវពិន័យមួយថ្ងៃ 3 ដុល្លារ។\n2. ត្រូវបង់ប្រាក់បន្ទប់,ទឹក,ភ្លើងរាល់ថ្ងៃដើមខែដោយភ្ជាប់មកជាមួយបង្កាន់ដៃមួយសន្លឹក។\n3. ត្រូវធ្វើការផ្លាស់ប្ដូរសម្ភារៈក្នុងបន្ទប់ដែលខូចក្នុងអំឡុងពេលស្នាក់នៅដោយខ្លួនឯង។\n4. ត្រូវជូនដំណឹងដល់ម្ចាស់បន្ទប់យ៉ាងតិចណាស់ 15 ថ្ងៃមុននឹងបញ្ឈប់ការជួលនិងសម្អាតបន្ទប់ឲ្យបានស្អាតមុននឹងចាកចេញបើមិនដូច្នេះទេម្ចាស់បន្ទប់មានសិទ្ធិកាត់ប្រាក់កក់ចំនួន 20 ដុល្លាររបស់លោកអ្នក។\n5. ត្រូវគោរពបទបញ្ជាផ្ទៃក្នុងរបស់បន្ទប់ជួល។`;
             return sendMessage(msgObj, ruleMessage, [payButton, ruleButton]);
 
         case "register":
@@ -74,10 +77,11 @@ async function handleCallbackQuery(callback_query) {
     }
 }
 
-function handleMessage(messageObj){
+// handle income messages
+async function handleMessage(messageObj) {
     const chatId = messageObj.chat.id;
     const messageText = messageObj.text || " ";
-    // const messagePhoto = messageObj.photo;
+    const messagePhoto = messageObj.photo;
 
     console.log(messageObj);
 
@@ -86,6 +90,9 @@ function handleMessage(messageObj){
         if (messageText.charAt(0) === "/") {
             const command = messageText.substr(1);
             handleCommands(messageObj, command);
+            // clear on going step, start again!
+            clearSteps(chatId);
+
         }
 
         // Handle Registration Steps
@@ -98,16 +105,25 @@ function handleMessage(messageObj){
             return handlePhotoRequest(messageObj);
         }
         
+        // handle error when tenant send photo without click btn (inline keyboard) 'pay now' 
+        if (!paymentRequestSteps[chatId] && messagePhoto) {
+            return sendMessage(messageObj, "Please click the 'Pay Now' button before sending the photos to request payment!\n\nType /start ");
+        }
+
+        // handle error if tenant just msg text without click any action like button inline or command
+
+        
     } catch (error) {
         console.error("Error Message: ",error.message);
     }
-    
 }
 
 // handle bot commands
 async function handleCommands(messageObj, command) {
     switch (command) {
         case "start":
+            clearSteps(messageObj.chat.id);
+
             const isRegistered = checkTenantsRegistered(messageObj.chat.id);
             if (isRegistered) {
                 return sendMessage(
