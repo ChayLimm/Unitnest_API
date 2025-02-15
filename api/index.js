@@ -15,6 +15,11 @@ app.get('/test', (req, res) => {
     res.send('hello');
 });
 
+app.post("/testAPI", async (req, res) =>{
+    console.log(req.body);
+    // request... 
+}); 
+
 app.post("/telegram", async (req, res) => {
     console.log(req.body);
     res.send(await handler(req));
