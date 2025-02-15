@@ -9,6 +9,7 @@ const yesButton = [{text: "Yes", callback_data: "yes"}];
 const noButton = [{text: "No", callback_data: "no"}];
 
 const tenantsFilePath = `./tenants.json`;
+const memoryStoreData = []; // for store data tenant registration
 
 const registrationSteps = {}; // track user registration steps
 const paymentRequestSteps = {}; // track users expecting payment images
@@ -193,7 +194,7 @@ async function registrationFlow(messageObj) {
             };
 
             // Save tenant data to file
-            saveTenantsRegistration(tenant);
+            // saveTenantsRegistration(tenant);
 
             clearSteps(chatId);
 
