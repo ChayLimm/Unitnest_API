@@ -289,7 +289,7 @@ const registrationSchema = Joi.object({
 
 function checkTenantsRegistered(chat_id) {
     try {
-        const data = fs.readFileSync('./tenants.json', 'utf-8');
+        const data = fs.readFileSync(tenantsFilePath, 'utf-8');
         const tenants = JSON.parse(data); // Get arrays data (object)
         for (let i = 0; i < tenants.length; i++) {
             if (tenants[i].chatId === chat_id) {
