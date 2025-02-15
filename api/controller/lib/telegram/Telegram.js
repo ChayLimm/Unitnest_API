@@ -1,5 +1,6 @@
 const { axiosInstance } = require("../axios");
 const fs = require("fs"); 
+const Joi = require("joi");
 
 const payButton =  [{ text: "Pay Now", callback_data: "pay" }];
 const ruleButton = [{text: "Rules", callback_data: "rule"}];
