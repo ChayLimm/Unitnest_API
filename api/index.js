@@ -59,6 +59,8 @@ app.post("/khqrstatus", async(req, res) => {
     }
 });
 
+console.log(process.env.BOT_TOKEN); // Check if BOT_TOKEN is loaded correctly
+
 // Set webhook for Telegram after deployment
 const setWebhook = async () => {
     try {
@@ -72,7 +74,6 @@ const setWebhook = async () => {
 };
 
 setWebhook();
-console.log(process.env.BOT_TOKEN); // Check if BOT_TOKEN is loaded correctly
 
 
 // Export the app for Vercel's serverless function
