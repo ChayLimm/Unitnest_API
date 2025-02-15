@@ -1,7 +1,7 @@
 const { axiosInstance } = require("../axios");
 const fs = require("fs"); 
 const Joi = require("joi");
-const path = require('path');
+// const path = require('path');
 
 const payButton =  [{ text: "Pay Now", callback_data: "pay" }];
 const ruleButton = [{text: "Rules", callback_data: "rule"}];
@@ -21,7 +21,7 @@ function clearSteps(chatId) {
     }
 }
 
-const tenantsFilePath = path.join(__dirname, '..', 'tenants.json');
+// const tenantsFilePath = path.join(__dirname, '..', 'tenants.json');
 
 function sendMessage(messageObj,messageText,button = null, photo = null){
     var messsageObj1;
@@ -193,7 +193,7 @@ async function registrationFlow(messageObj) {
             };
 
             // Save tenant data to file
-            saveTenantsRegistration(tenant);
+            // saveTenantsRegistration(tenant);
 
             clearSteps(chatId);
 
