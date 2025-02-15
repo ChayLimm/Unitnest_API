@@ -1,6 +1,7 @@
 const { axiosInstance } = require("../axios");
 const fs = require("fs"); 
 const Joi = require("joi");
+const path = require('path');
 
 const payButton =  [{ text: "Pay Now", callback_data: "pay" }];
 const ruleButton = [{text: "Rules", callback_data: "rule"}];
@@ -20,7 +21,7 @@ function clearSteps(chatId) {
     }
 }
 
-const tenantsFilePath = `../tenants.json`;
+const tenantsFilePath = path.join(__dirname, '..', 'tenants.json');
 
 function sendMessage(messageObj,messageText,button = null, photo = null){
     var messsageObj1;
