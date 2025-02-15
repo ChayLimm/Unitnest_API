@@ -1,4 +1,4 @@
-const { handleMessage , handleCallbackQuery} = require("./lib/telegram/Telegram");
+const { handleMessage , handleCallbackQuery} = require("./lib/telegram/telegram");
 const { handleRequestBakong ,handleKHQRstatus} = require("./lib/khqr/khqr");
 
 async function handler(req,res,method){
