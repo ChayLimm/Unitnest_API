@@ -193,7 +193,7 @@ async function registrationFlow(messageObj) {
             };
 
             // Save tenant data to file
-            // saveTenantsRegistration(tenant);
+            saveTenantsRegistration(tenant);
 
             clearSteps(chatId);
 
@@ -305,12 +305,12 @@ function checkTenantsRegistered(chat_id) {
 function saveTenantsRegistration(newTenant) {
     try {
         let tenants = [];
-        if (fs.existsSync(tenantsFilePath)) {
-            const data = fs.readFileSync(tenantsFilePath, 'utf-8');
+        if (fs.existsSync('tenants.json')) {
+            const data = fs.readFileSync('tenants.json', 'utf-8');
             tenants = data ? JSON.parse(data) : [];
         }
         tenants.push(newTenant);
-        fs.writeFileSync(tenantsFilePath, JSON.stringify(tenants, null, 2));
+        fs.writeFileSync('tenants.json', JSON.stringify(tenants, null, 2));
         console.log('Tenant registration saved successfully.');
     } catch (err) {
         console.error('Error saving tenant registration:', err);
