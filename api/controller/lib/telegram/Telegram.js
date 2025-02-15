@@ -193,7 +193,7 @@ async function registrationFlow(messageObj) {
             };
 
             // Save tenant data to file
-            // saveTenantsRegistration(tenant);
+            saveTenantsRegistration(tenant);
 
             clearSteps(chatId);
 
