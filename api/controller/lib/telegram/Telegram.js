@@ -8,6 +8,8 @@ const registerButton = [{ text: "Register", callback_data: "register" }];
 const yesButton = [{text: "Yes", callback_data: "yes"}];
 const noButton = [{text: "No", callback_data: "no"}];
 
+const tenantsFilePath = `./tenants.json`;
+
 const registrationSteps = {}; // track user registration steps
 const paymentRequestSteps = {}; // track users expecting payment images
 
