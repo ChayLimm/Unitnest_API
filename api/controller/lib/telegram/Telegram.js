@@ -20,7 +20,7 @@ function clearSteps(chatId) {
     }
 }
 
-const tenantsFilePath = `./tenants.json`;
+const tenantsFilePath = `../tenants.json`;
 
 function sendMessage(messageObj,messageText,button = null, photo = null){
     var messsageObj1;
