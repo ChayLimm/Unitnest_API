@@ -27,7 +27,7 @@ function clearSteps(chatId) {
 function sendMessage(messageObj,messageText,button = null, photo = null){
     var messageObj1;
     if(messageObj.callback_query){
-        messsageObj1 = messageObj.message
+        messageObj1 = messageObj.message
     }else {
         messageObj1 = messageObj;
     }
