@@ -191,7 +191,7 @@ async function registrationFlow(messageObj) {
             };
 
             // Save tenant data to file
-            saveTenantsRegistration(tenant);
+            // saveTenantsRegistration(tenant);
 
             clearSteps(chatId);
 
@@ -287,7 +287,7 @@ const registrationSchema = Joi.object({
 
 function checkTenantsRegistered(chat_id) {
     try {
-        const data = fs.readFileSync('tenants.json', 'utf-8');
+        const data = fs.readFileSync('./tenants.json', 'utf-8');
         const tenants = JSON.parse(data); // Get arrays data (object)
         for (let i = 0; i < tenants.length; i++) {
             if (tenants[i].chatId === chat_id) {
@@ -300,20 +300,20 @@ function checkTenantsRegistered(chat_id) {
     }
 }
 
-function saveTenantsRegistration(newTenant) {
-    try {
-        let tenants = [];
-        if (fs.existsSync('tenants.json')) {
-            const data = fs.readFileSync('tenants.json', 'utf-8');
-            tenants = data ? JSON.parse(data) : [];
-        }
-        tenants.push(newTenant);
-        fs.writeFileSync('tenants.json', JSON.stringify(tenants, null, 2));
-        console.log('Tenant registration saved successfully.');
-    } catch (err) {
-        console.error('Error saving tenant registration:', err);
-    }
-}
+// function saveTenantsRegistration(newTenant) {
+//     try {
+//         let tenants = [];
+//         if (fs.existsSync('tenants.json')) {
+//             const data = fs.readFileSync('tenants.json', 'utf-8');
+//             tenants = data ? JSON.parse(data) : [];
+//         }
+//         tenants.push(newTenant);
+//         fs.writeFileSync('tenants.json', JSON.stringify(tenants, null, 2));
+//         console.log('Tenant registration saved successfully.');
+//     } catch (err) {
+//         console.error('Error saving tenant registration:', err);
+//     }
+// }
 
 module.exports= {handleMessage, handleCallbackQuery};
 
