@@ -90,9 +90,9 @@ async function handleMessage(messageObj) {
         if (messageText.charAt(0) === "/") {
             const command = messageText.substr(1);
             handleCommands(messageObj, command);
-            // clear on going step, start again!
-            clearSteps(chatId);
-
+            clearSteps(chatId); // clear on going step, start again!
+        }else{
+            sendMessage(messageObj, "Sorry, I don't understand this action.");
         }
 
         // Handle Registration Steps
@@ -143,6 +143,97 @@ async function handleCommands(messageObj, command) {
         default:
             return sendMessage(messageObj, "Sorry, I do not understand.");
     }
+}
+
+async function registrationFlow(messageObj) {
+    const chatId = messageObj.chat.id;
+    const msgText = messageObj.text;
+    const step = registrationSteps[chatId].step;
+
+    switch (step) {
+        case 1:
+            // Validate name
+            const { error: nameErr, value: validName } = Joi.object({ name: registrationSchema.extract("name") }).validate({ name: msgText });
+            if (nameErr) return sendMessage(messageObj, "Invalid Name, pls re-enter:\nExample: Jonh Doe");
+            
+            registrationSteps[chatId].name = validName.name; // Store cleaned-up name
+            registrationSteps[chatId].step = 2;
+            return sendMessage(messageObj, "Enter your phone number:\nExample: 012345678");
+
+        case 2:
+            // Validate phone number
+            const { error: phoneErr, value: validPhone } = Joi.object({ phone: registrationSchema.extract("phone")}).validate({ phone: msgText });
+            if (phoneErr) return sendMessage(messageObj, "Invalid Phone number, pls re-enter:\nExample: 012345678");
+
+            // Store valid phone number
+            registrationSteps[chatId].phone = validPhone.phone;
+            registrationSteps[chatId].step = 3;
+            return sendMessage(messageObj, "Enter your ID Identification number:\nExample: 1234567890");
+
+        case 3:
+            // Validate ID card number
+            const { error: idIdentifyErr, value: validIdentify } = Joi.object({ idIdentification: registrationSchema.extract("idIdentification")}).validate({ idIdentification: msgText });
+            if (idIdentifyErr) return sendMessage(messageObj, "Invalid ID Identification number, pls re-enter:\nExample: 1234567890");
+
+            // Store valid ID card number
+            registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
+            registrationSteps[chatId].registration_date = new Date().toLocaleDateString();
+            
+            // Print user info after registration is successful
+            const userInfo = `Here is the information you provided:\nName: ${registrationSteps[chatId].name}\nPhone: ${registrationSteps[chatId].phone}\nID Card: ${registrationSteps[chatId].id_Identification}\nRegistration Successful!`;
+
+            // Save the tenant data to file
+            const tenant = {
+                chatId: chatId,
+                name: registrationSteps[chatId].name,
+                phone: registrationSteps[chatId].phone,
+                idIdentification: registrationSteps[chatId].id_Identification,
+                registeredOn: registrationSteps[chatId].registration_date,
+            };
+
+            // Save tenant data to file
+            saveTenantsRegistration(tenant);
+
+            clearSteps(chatId);
+
+            return sendMessage(messageObj, userInfo, [payButton, ruleButton]);
+
+        default:
+            return sendMessage(messageObj, "Sorry, I don't understand.");
+    }
+}
+
+// Handle photo (image) messages
+async function handlePhotoRequest(msgObj) {
+    const chatId = msgObj.chat.id;
+    const photo = msgObj.photo;
+
+    if (photo && Array.isArray(photo)) {
+        const fileId = photo[photo.length - 1].file_id;
+        try {
+            const fileDetails = await axiosInstance.get("getFile", {file_id: fileId});
+            if (fileDetails && fileDetails.data) {
+                const fileData = fileDetails.data.result;
+
+                const photoData = {
+                    chatId: chatId,
+                    fileId: fileId,
+                    fileSize: fileData.file_size,
+                    filePath: fileData.file_path,
+                    fileUrl: `https://api.telegram.org/file/bot${Token}/${fileData.file_path}`,
+                    caption: msgObj.caption || '', 
+                    receivedAt: new Date().toLocaleDateString(),
+                }
+                console.log("Received photo data:", JSON.stringify(photoData, null, 2));
+
+            }else{
+                console.log("Failed to retrive your photo");
+            }
+        } catch (error) {
+            console.error("Error Message: ", error.message);
+        }
+    }
+
 }
 
 function formatValidName(value, helpers) {
@@ -204,7 +295,6 @@ function checkTenantsRegistered(chat_id) {
                 return true;
             }
         }
-        return false;
     } catch (err) {
         console.error('Error reading file:', err);
         return false;
@@ -213,7 +303,6 @@ function checkTenantsRegistered(chat_id) {
 
 function saveTenantsRegistration(newTenant) {
     try {
-        // Check if the file exists, if not, create it with an empty array
         let tenants = [];
         if (fs.existsSync(tenantsFilePath)) {
             const data = fs.readFileSync(tenantsFilePath, 'utf-8');
@@ -227,100 +316,7 @@ function saveTenantsRegistration(newTenant) {
     }
 }
 
-async function registrationFlow(messageObj) {
-    const chatId = messageObj.chat.id;
-    const msgText = messageObj.text;
-    const step = registrationSteps[chatId].step;
-
-    switch (step) {
-        case 1:
-            // Validate name
-            const { error: nameErr, value: validName } = Joi.object({ name: registrationSchema.extract("name") }).validate({ name: msgText });
-            if (nameErr) return sendMessage(messageObj, "Invalid Name, pls re-enter:\nExample: Jonh Doe");
-            
-            registrationSteps[chatId].name = validName.name; // Store cleaned-up name
-            registrationSteps[chatId].step = 2;
-            return sendMessage(messageObj, "Enter your phone number:\nExample: 012345678");
-
-        case 2:
-            // Validate phone number
-            const { error: phoneErr, value: validPhone } = Joi.object({ phone: registrationSchema.extract("phone")}).validate({ phone: msgText });
-            if (phoneErr) return sendMessage(messageObj, "Invalid Phone number, pls re-enter:\nExample: 012345678");
-
-            // Store valid phone number
-            registrationSteps[chatId].phone = validPhone.phone;
-            registrationSteps[chatId].step = 3;
-            return sendMessage(messageObj, "Enter your ID Identification number:\nExample: 1234567890");
-
-        case 3:
-            // Validate ID card number
-            const { error: idIdentifyErr, value: validIdentify } = Joi.object({ idIdentification: registrationSchema.extract("idIdentification")}).validate({ idIdentification: msgText });
-            if (idIdentifyErr) return sendMessage(messageObj, "Invalid ID Identification number, pls re-enter:\nExample: 1234567890");
-
-            // Store valid ID card number
-            registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
-            registrationSteps[chatId].registration_date = new Date().toLocaleDateString();
-            
-            // Print user info after registration is successful
-            const userInfo = `Here is the information you provided:\nName: ${registrationSteps[chatId].name}\nPhone: ${registrationSteps[chatId].phone}\nID Card: ${registrationSteps[chatId].id_Identification}\nRegistration Successful!`;
-
-            // Save the tenant data to file
-            const tenant = {
-                chatId: chatId,
-                name: registrationSteps[chatId].name,
-                phone: registrationSteps[chatId].phone,
-                idIdentification: registrationSteps[chatId].id_Identification,
-                registeredOn: registrationSteps[chatId].registration_date,
-            };
-
-            // Save tenant data to file
-            saveTenantsRegistration(tenant);
-
-            // Clear registration data from memory
-            delete registrationSteps[chatId];
-
-            return sendMessage(messageObj, userInfo, [payButton, ruleButton]);
-
-        default:
-            return sendMessage(messageObj, "Sorry, I don't understand.");
-    }
-}
-
-// Handle photo (image) messages
-async function handlePhotoRequest(msgObj) {
-    const chatId = msgObj.chat.id;
-    const photo = msgObj.photo;
-
-    if (photo && Array.isArray(photo)) {
-        const fileId = photo[photo.length - 1].file_id;
-        try {
-            const fileDetails = await axiosInstance.get("getFile", {file_id: fileId});
-            if (fileDetails && fileDetails.data) {
-                const fileData = fileDetails.data.result;
-
-                const photoData = {
-                    chatId: chatId,
-                    fileId: fileId,
-                    fileSize: fileData.file_size,
-                    filePath: fileData.file_path,
-                    fileUrl: `https://api.telegram.org/file/bot${Token}/${fileData.file_path}`,
-                    caption: msgObj.caption || '', 
-                    receivedAt: new Date().toLocaleDateString(),
-                }
-                console.log("Received photo data:", JSON.stringify(photoData, null, 2));
-
-            }else{
-                console.log("Failed to retrive your photo");
-            }
-        } catch (error) {
-            console.error("Error Message: ", error.message);
-        }
-    }
-
-}
-
-
-module.exports= {handleMessage, handleCallbackQuery};
+module.exports= {handleMessage, handleCallbackQuery, handleCommands, registrationFlow };
 
 
             // return sendMessage(
