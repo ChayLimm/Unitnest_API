@@ -316,7 +316,7 @@ function saveTenantsRegistration(newTenant) {
     }
 }
 
-module.exports= {handleMessage, handleCallbackQuery, handleCommands, registrationFlow };
+module.exports= {handleMessage, handleCallbackQuery};
 
 
             // return sendMessage(
