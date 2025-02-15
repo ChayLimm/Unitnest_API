@@ -110,9 +110,9 @@ async function handleMessage(messageObj) {
         }
 
         // handle error if tenant just msg text without click any action like button inline or command
-        if (messageText && !paymentRequestSteps[chatId] && !registrationSteps[chatId]) {
-            sendMessage(messageObj, "Sorry, I don't understand this action.")
-        }
+        // if (messageText && !paymentRequestSteps[chatId] && !registrationSteps[chatId]) {
+        //     sendMessage(messageObj, "Sorry, I don't understand this action.")
+        // }
         
     } catch (error) {
         console.error("Error Message: ",error.message);
