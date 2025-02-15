@@ -114,6 +114,9 @@ async function handleMessage(messageObj) {
         // if (messageText && !paymentRequestSteps[chatId] && !registrationSteps[chatId]) {
         //     sendMessage(messageObj, "Sorry, I don't understand this action.")
         // }
+        if (messageText && !paymentRequestSteps[chatId] && !registrationSteps[chatId]) {
+            return sendMessage(messageObj, "Sorry, I don't understand this action. Type /start to begin.");
+        }
         
     } catch (error) {
         console.error("Error Message: ",error.message);
@@ -194,7 +197,7 @@ async function registrationFlow(messageObj) {
             };
 
             // Save tenant data to file
-            // saveTenantsRegistration(tenant);
+            saveTenantsRegistration(tenant);
 
             clearSteps(chatId);
 
@@ -289,34 +292,38 @@ const registrationSchema = Joi.object({
 });
 
 function checkTenantsRegistered(chat_id) {
-    try {
-        const data = fs.readFileSync(tenantsFilePath, 'utf-8');
-        const tenants = JSON.parse(data); // Get arrays data (object)
-        for (let i = 0; i < tenants.length; i++) {
-            if (tenants[i].chatId === chat_id) {
-                return true;
-            }
-        }
-    } catch (err) {
-        console.error('Error reading file:', err);
-        return false;
-    }
+    return memoryStoreData.some(tenant => tenant.chatId === chat_id);
+    // try {
+    //     const data = fs.readFileSync(tenantsFilePath, 'utf-8');
+    //     const tenants = JSON.parse(data); // Get arrays data (object)
+    //     for (let i = 0; i < tenants.length; i++) {
+    //         if (tenants[i].chatId === chat_id) {
+    //             return true;
+    //         }
+    //     }
+    // } catch (err) {
+    //     console.error('Error reading file:', err);
+    //     return false;
+    // }
 }
 
 function saveTenantsRegistration(newTenant) {
-    try {
-        // Check if the file exists, if not, create it with an empty array
-        let tenants = [];
-        if (fs.existsSync(tenantsFilePath)) {
-            const data = fs.readFileSync(tenantsFilePath, 'utf-8');
-            tenants = data ? JSON.parse(data) : [];
-        }
-        tenants.push(newTenant);
-        fs.writeFileSync(tenantsFilePath, JSON.stringify(tenants, null, 2));
-        console.log('Tenant registration saved successfully.');
-    } catch (err) {
-        console.error('Error saving tenant registration:', err);
-    }
+    memoryStoreData.push(newTenant);
+    console.log('Tenant registration saved to memory:', newTenant);
+    console.log('Total tenants registered:', memoryStoreData.length);
+    // try {
+    //     // Check if the file exists, if not, create it with an empty array
+    //     let tenants = [];
+    //     if (fs.existsSync(tenantsFilePath)) {
+    //         const data = fs.readFileSync(tenantsFilePath, 'utf-8');
+    //         tenants = data ? JSON.parse(data) : [];
+    //     }
+    //     tenants.push(newTenant);
+    //     fs.writeFileSync(tenantsFilePath, JSON.stringify(tenants, null, 2));
+    //     console.log('Tenant registration saved successfully.');
+    // } catch (err) {
+    //     console.error('Error saving tenant registration:', err);
+    // }
 }
 
 module.exports= {handleMessage, handleCallbackQuery};
