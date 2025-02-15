@@ -93,6 +93,7 @@ async function handleMessage(messageObj) {
             const command = messageText.substr(1);
             handleCommands(messageObj, command);
             clearSteps(chatId); // clear on going step, start again!
+            return;
         }
 
         // Handle Registration Steps
@@ -111,11 +112,8 @@ async function handleMessage(messageObj) {
         }
 
         // handle error if tenant just msg text without click any action like button inline or command
-        // if (messageText && !paymentRequestSteps[chatId] && !registrationSteps[chatId]) {
-        //     sendMessage(messageObj, "Sorry, I don't understand this action.")
-        // }
-        if (messageText && !paymentRequestSteps[chatId] && !registrationSteps[chatId]) {
-            return sendMessage(messageObj, "Sorry, I don't understand this action. Type /start to begin.");
+        if (messageText.trim() && !paymentRequestSteps[chatId] && !registrationSteps[chatId]) {
+            return sendMessage(messageObj, "Sorry, I don't understand this action.")
         }
         
     } catch (error) {
