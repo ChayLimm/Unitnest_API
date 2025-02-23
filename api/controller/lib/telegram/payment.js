@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { axiosInstance } = require("../axios");
-const { sendMessage } = require("./messageUtils");
+const { sendMessage } = require("./messages");
 const FormData = require('form-data');
 const fs = require('fs');
 

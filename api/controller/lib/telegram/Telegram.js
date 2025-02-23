@@ -1,6 +1,6 @@
 const { handleRegistration, registrationSteps, checkTenantsRegistered } = require("./registration");
 const { handlePhotoRequest, paymentRequestSteps   } = require("./payment");
-const { sendMessage } = require("./messageUtils");
+const { sendMessage } = require("./messages");
 const { payButton, ruleButton, registerButton } = require("./buttons");
 
 function clearSteps(chatId) {
@@ -91,7 +91,7 @@ async function handleCommands(messageObj, command) {
 
             // const isRegistered = await checkTenantsRegistered(messageObj.chat.id);
             const isRegistered = true;  // just for testing
-            
+
             if (isRegistered) {
                 return sendMessage(
                     messageObj,

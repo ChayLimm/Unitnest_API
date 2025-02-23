@@ -1,6 +1,6 @@
 const fs = require("fs"); 
 const Joi = require("joi");
-const { sendMessage } = require("./messageUtils");
+const { sendMessage } = require("./messages");
 const { payButton, ruleButton } = require("./buttons");
 
 const registrationSteps = {}; // track user registration steps
