@@ -90,7 +90,8 @@ async function handleCommands(messageObj, command) {
             clearSteps(messageObj.chat.id);
 
             // const isRegistered = await checkTenantsRegistered(messageObj.chat.id);
-            const isRegistered = true;
+            const isRegistered = true;  // just for testing
+            
             if (isRegistered) {
                 return sendMessage(
                     messageObj,
