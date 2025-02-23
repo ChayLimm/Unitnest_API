@@ -7,7 +7,7 @@ function handleRequestBakong(body,res) {
     if (!body.bakongAccount.amount) {
         return res.status(400).json({ error: "Amount is required" }); 
     }
-    if (isNaN(amount) || amount <= 0) {
+    if (isNaN(body.bakongAccount.amount) || body.bakongAccount.amount <= 0) {
         return res.status(400).json({ error: "Invalid amount provided, must be higher than 0" });
     }
 
