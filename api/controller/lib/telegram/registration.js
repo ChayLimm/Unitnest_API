@@ -137,7 +137,7 @@ async function handleRegistration(messageObj) {
             console.log("Received Registration data:", JSON.stringify(tenant, null, 2));
 
             // Save tenant data to file
-            saveTenantsRegistration(tenant);
+            // saveTenantsRegistration(tenant);
             delete registrationSteps[chatId]; // Registration complete
 
             return sendMessage(

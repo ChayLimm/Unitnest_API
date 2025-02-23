@@ -89,7 +89,8 @@ async function handleCommands(messageObj, command) {
         case "start":
             clearSteps(messageObj.chat.id);
 
-            const isRegistered = await checkTenantsRegistered(messageObj.chat.id);
+            // const isRegistered = await checkTenantsRegistered(messageObj.chat.id);
+            const isRegistered = true;
             if (isRegistered) {
                 return sendMessage(
                     messageObj,
