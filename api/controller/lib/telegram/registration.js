@@ -85,8 +85,9 @@ const registrationSchema = Joi.object({
 async function handleRegistration(messageObj) {
     const chatId = messageObj.chat.id;
     const msgText = messageObj.text;
-    const step = registrationSteps[chatId]?.step; 
+    const step = registrationSteps[chatId]?.step;
 
+    // check step, initailized step of registration to keep tack
     if (!registrationSteps[chatId]) {
             registrationSteps[chatId] = { 
                 step: 1, 
@@ -95,12 +96,12 @@ async function handleRegistration(messageObj) {
             return sendMessage(messageObj, "Enter your full name:\nExample: John Doe");
     }
 
+    // flow of register following steps
     switch (step) {
         case 1:
             // Validate name
             const { error: nameErr, value: validName } = Joi.object({ name: registrationSchema.extract("name") })
             .validate({ name: msgText });
-        
             if (nameErr) return sendMessage(messageObj, "Invalid Name, pls re-enter:\nExample: Jonh Doe");
             
             registrationSteps[chatId].name = validName.name; // Store cleaned-up name
@@ -120,8 +121,7 @@ async function handleRegistration(messageObj) {
             // Validate ID card number
             const { error: idIdentifyErr, value: validIdentify } = Joi.object({ idIdentification: registrationSchema.extract("idIdentification")}).validate({ idIdentification: msgText });
             if (idIdentifyErr) return sendMessage(messageObj, "Invalid ID Identify number, pls re-enter:\nExample: 1234567890");
-
-            // registrationSteps[chatId].id_Identification = msgText;
+            
             registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
             registrationSteps[chatId].registration_date = new Date().toLocaleDateString()
 
