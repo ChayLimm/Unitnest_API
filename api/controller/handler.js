@@ -14,9 +14,9 @@ async function handler(req,res,method){
             const callbackQuery = body.callback_query;
             await handleCallbackQuery(callbackQuery);
         }
-        if(body.amount){
-            console.log(body.amount);
-            await handleRequestBakong(body.amount,res);
+        if(body.bakongAccount){
+            console.log(body.bakongAccount.bakongID);
+            await handleRequestBakong(body.bakongAccount,res);
         }
         if(body.md5){
             console.log(body.md5);
