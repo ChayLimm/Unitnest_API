@@ -4,10 +4,10 @@ const axios = require('axios');
 
 function handleRequestBakong(body,res) {
 
-    if (!body.bakongAccount.amount) {
+    if (!body.amount) {
         return res.status(400).json({ error: "Amount is required" }); 
     }
-    if (isNaN(body.bakongAccount.amount) || body.bakongAccount.amount <= 0) {
+    if (isNaN(body.amount) || body.amount <= 0) {
         return res.status(400).json({ error: "Invalid amount provided, must be higher than 0" });
     }
 
@@ -33,9 +33,9 @@ function handleRequestBakong(body,res) {
     };
 
     const individualInfo = new IndividualInfo(
-        body.bakongAccount.accountID,
-        body.bakongAccount.username,
-        body.bakongAccount.location,
+        body.accountID,
+        body.username,
+        body.location,
         optionalData
     );
 
