@@ -4,12 +4,12 @@ const axios = require('axios');
 
 function handleRequestBakong(body,res) {
 
-    if (body.amount == null) {  // Checks for undefined or null
-        return res.status(400).json({ error: "Amount is required" }); 
-    }
-    if (isNaN(body.amount) || body.amount <= 0) {
-        return res.status(400).json({ error: "Invalid amount provided, must be greater than 0" });
-    }
+    // if (body.amount == null) {  // Checks for undefined or null
+    //     return res.status(400).json({ error: "Amount is required" }); 
+    // }
+    // if (isNaN(body.amount) || body.amount <= 0) {
+    //     return res.status(400).json({ error: "Invalid amount provided, must be greater than 0" });
+    // }
     
 
     const {
