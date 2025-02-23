@@ -27,15 +27,6 @@ app.post("/telegram", async (req, res) => {
 });
 
 app.post("/khqr", async (req, res) => {
-    console.log(req.body);
-    const amount = req.body.amount;
-
-    if (!amount) {
-        return res.status(400).json({ error: "Amount is required" });
-    }
-    if (isNaN(amount) || amount <= 0) {
-        return res.status(400).json({ error: "Invalid amount provided, must be higher than 0" });
-    }
 
     try {
         await handler(req, res);
