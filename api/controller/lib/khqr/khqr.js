@@ -2,7 +2,7 @@ const { axiosInstance } = require("../axios");
 const axios = require('axios');
 
 
-function handleRequestBakong(amount,res) {
+function handleRequestBakong(body,res) {
 
     if (!amount) {
         return res.status(400).json({ error: "Amount is required" }); 
@@ -33,9 +33,9 @@ function handleRequestBakong(amount,res) {
     };
 
     const individualInfo = new IndividualInfo(
-        "chaylim_cheng@aclb",
-        "Cheng ChayLim",
-        "PHNOM PENH",
+        body.bakongAccount.accountID,
+        body.bakongAccount.username,
+        body.bakongAccount.location,
         optionalData
     );
 
