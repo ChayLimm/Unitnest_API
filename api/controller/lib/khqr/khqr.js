@@ -4,7 +4,7 @@ const axios = require('axios');
 
 function handleRequestBakong(body,res) {
 
-    if (!amount) {
+    if (!body.bakongAccount.amount) {
         return res.status(400).json({ error: "Amount is required" }); 
     }
     if (isNaN(amount) || amount <= 0) {
