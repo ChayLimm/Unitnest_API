@@ -4,12 +4,11 @@ const axios = require('axios');
 
 function handleRequestBakong(body,res) {
 
-    // if (body.amount == null) {  // Checks for undefined or null
-    //     return res.status(400).json({ error: "Amount is required" }); 
-    // }
-    // if (isNaN(body.amount) || body.amount <= 0) {
-    //     return res.status(400).json({ error: "Invalid amount provided, must be greater than 0" });
-    // }
+    body.amount = Number(body.amount); // Ensure it's a valid number
+
+    if (!body.amount || isNaN(body.amount) || body.amount <= 0) {
+        return res.status(400).json({ error: "Invalid amount provided, must be greater than 0" });
+    }
     
 
     const {
@@ -22,7 +21,7 @@ function handleRequestBakong(body,res) {
 
     const optionalData = {
         currency: khqrData.currency.usd,
-        amount: amount,
+        amount: body.amount,
         mobileNumber: "85585382962",
         storeLabel: "Coffee Shop",
         terminalLabel: "Cashier_1",
@@ -34,7 +33,7 @@ function handleRequestBakong(body,res) {
     };
 
     const individualInfo = new IndividualInfo(
-        body.accountID,
+        body.bakongID,
         body.username,
         body.location,
         optionalData
