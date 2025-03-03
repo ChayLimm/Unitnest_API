@@ -155,7 +155,7 @@ function savePayRequestData(msgObj, ResponeData, state) {
         let electricityAccuracy = null;
         let photo1 = null; 
         let photo2 = null;
-        let systemId = "dummy-system-id";  // Replace with actual systemId logic
+        let systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // sample systemId for testing
 
         // Ensure state and photos are available
         if (state && state.photos.length === 2) {
@@ -178,14 +178,15 @@ function savePayRequestData(msgObj, ResponeData, state) {
     
         // Prepare the data to json format
         const dataToSave = {
-          chatId: msgObj.chat.id,
-          date: new Date().toLocaleDateString(),  
-          waterMeter: waterMeter,
-          electricity: electricityMeter,
-          waterAccuracy: waterAccuracy,
-          electricityAccuracy: electricityAccuracy,
-          photo1URL: photo1,
-          Photo2URL: photo2
+            systemId: systemId,
+            chatId: msgObj.chat.id,
+            date: new Date().toLocaleDateString(),  
+            waterMeter: waterMeter,
+            electricity: electricityMeter,
+            waterAccuracy: waterAccuracy,
+            electricityAccuracy: electricityAccuracy,
+            photo1URL: photo1,
+            Photo2URL: photo2
         };
 
         console.log('\nRetrive Data From Api after done payment request!!')
