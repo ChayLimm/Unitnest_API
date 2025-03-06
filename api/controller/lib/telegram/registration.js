@@ -86,6 +86,7 @@ async function handleRegistration(messageObj) {
     const chatId = messageObj.chat.id;
     const msgText = messageObj.text;
     const step = registrationSteps[chatId]?.step;
+    let systemID = 'MF3DBs9vbee9yw0jwfBjK9kIGXs2'; // sample systemId just for testing for now 
 
     // check step, initailized step of registration to keep tack
     if (!registrationSteps[chatId]) {
@@ -126,8 +127,10 @@ async function handleRegistration(messageObj) {
             registrationSteps[chatId].registration_date = new Date().toLocaleDateString()
 
             // Prepare the data into JSON forma after all steps are complete
+            // ad system Id just for testing
             const tenant = {
-                chatId: chatId,
+                systemID: systemID,
+                chatID: chatId,
                 name: registrationSteps[chatId].name,
                 phone: registrationSteps[chatId].phone,
                 idIdentification: registrationSteps[chatId].id_Identification,
