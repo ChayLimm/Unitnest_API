@@ -71,26 +71,26 @@ async function handlePhotoRequest(msgObj) {
                     state.step = 2; // Completed step for payment request
                     // console.log("Received Both Photo:", state.photos);
 
-                    // Use dummy data for testing
-                    const dummyData = [
-                        {
-                            "Meter Type": "Water",
-                            "Meter Number": "12345",
-                            "Accuracy": "98%"
-                        },
-                        {
-                            "Meter Type": "Electricity",
-                            "Meter Number": "67890",
-                            "Accuracy": "95%"
-                        }
-                    ];
+                    // // Use dummy data for testing
+                    // const dummyData = [
+                    //     {
+                    //         "Meter Type": "Water",
+                    //         "Meter Number": "12345",
+                    //         "Accuracy": "98%"
+                    //     },
+                    //     {
+                    //         "Meter Type": "Electricity",
+                    //         "Meter Number": "67890",
+                    //         "Accuracy": "95%"
+                    //     }
+                    // ];
 
-                    // const response = await sendPhotosToAPI(state.photos[0].filePath, state.photos[1].filePath);
-                    // if (!response) {
-                    //     return sendMessage(msgObj, "Error processing payment request.");
-                    // }
+                    const response = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
+                    if (!response) {
+                        return sendMessage(msgObj, "Error processing payment request.");
+                    }
 
-                    savePayRequestData(msgObj, dummyData, state);   // Use dummy data for testing
+                    savePayRequestData(msgObj, response, state);   // Use dummy data for testing -> use response data from api 
                     delete paymentRequestSteps[chatId]; // Payment request complete
                     state.photos = [];   // Clear stored photos
 
@@ -115,31 +115,35 @@ async function handlePhotoRequest(msgObj) {
     // }
 
 
-// process photo to flask api for detection
-async function sendPhotosToAPI(photo1, photo2) {
+// process photo to flask api for detection img
+async function sendPhotosToAPI(photo1Url, photo2Url) {
+    try {    
+        console.log("Sending payload to Flask API:", payload); // Debugging
 
-    const form = new FormData();
-
-    //append photos to form-data
-    form.append('photo1', fs.createReadStream(photo1));
-    form.append('photo2', fs.createReadStream(photo2));
-
-    try{
-        const response = await axiosInstance.post('http://flask_api_url_endpoint', form,{
-            headers:{
-                // ...form.getHeaders()
-                'Content-Type': 'multipart/form-data',
+        // Use Axios directly, request POST 
+        const response = await axios.post(
+            'https://66c0-203-144-80-238.ngrok-free.app/process', 
+            { 
+                image_urls: [photo1Url, photo2Url] 
+            },
+            { 
+                headers: { 'Content-Type': 'application/json' } 
             }
-        });
+        );
+
+        console.log("API Response:", response.data); // Debugging
+
         if (response.status === 200) {
-            return response.data;  // Return the JSON data from Flask API
-          } else {
+            return response.data; // Return the JSON data from Flask API
+        } else {
             console.error("Error: API request failed with status code", response.status);
             return null;
-          }
-
-    }catch(error){
-        console.error("Error sending photos to API:", error);
+        }
+    } catch (error) {
+        console.error("Error sending photos to API:", error.message);
+        if (error.response) {
+            console.error("API Response Error:", error.response.data); // Debugging
+        }
         return null;
     }
 }
@@ -176,10 +180,10 @@ function savePayRequestData(msgObj, ResponeData, state) {
             }
         }
     
-        // Prepare the data to json format
+        // Prepare the data payment request to json format
         const dataToSave = {
-            systemId: systemId,
-            chatId: msgObj.chat.id,
+            systemID: systemId,
+            chatID: msgObj.chat.id,
             date: new Date().toLocaleDateString(),  
             waterMeter: waterMeter,
             electricity: electricityMeter,
