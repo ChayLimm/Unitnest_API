@@ -15,12 +15,12 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
             // console.log("Message sent:", response.data);
         } else if (photo != null) {
             console.log("Sending message photo");
-            const response = await axios.get("sendPhoto", {
+            const response = await axiosInstance.post("sendPhoto", {
                 chat_id: messageObj.chat.id,
-                photo: photo, // file id / url of photo
-                text: messageText,
+                photo: photo, // File ID or URL of the photo
+                caption: messageText, // changed from `text` to `caption`
             });
-            // console.log("Photo sent:", response.data);
+            console.log("Photo sent:", response?.data);  // debug
         } else {
             console.log("Sending message without button");
             const response = await axiosInstance.get("sendMessage", {
@@ -31,6 +31,7 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
         }
     } catch (error) {
         console.error("Error sending message:", error.message);
+        console.log("Error response:", error.response?.data);   // debug, error message
     }
 }
 
