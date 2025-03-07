@@ -1,3 +1,4 @@
+const { axios } = require("axios");
 const { axiosInstance } = require("../axios");
 
 async function sendMessage(messageObj, messageText, button = null, photo = null) {
@@ -14,7 +15,7 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
             // console.log("Message sent:", response.data);
         } else if (photo != null) {
             console.log("Sending message photo");
-            const response = await axiosInstance.get("sendPhoto", {
+            const response = await axios.get("sendPhoto", {
                 chat_id: messageObj.chat.id,
                 photo: photo, // file id / url of photo
                 text: messageText,
