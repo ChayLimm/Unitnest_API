@@ -10,6 +10,7 @@ async function handler(req,res,method){
             const messageObj = body.message;
             await handleMessage(messageObj);
         }
+        
         // for handle receipt
         if (body.receipt) {
             const msgObj = {
