@@ -27,7 +27,7 @@ async function storeNotification(stringID, notificationData) {
     }
 
     // Add a new document to the "Notification" subcollection
-    const notificationRef = systemDocRef.collection('Notification').doc();
+    const notificationRef = systemDocRef.collection('notificationList').doc();
     await notificationRef.set(notificationData);
 
     console.log(`Notification added to subcollection with ID: ${notificationRef.id}`);
