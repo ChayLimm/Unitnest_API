@@ -1,6 +1,7 @@
 // const { handleMessage , handleCallbackQuery} = require("./lib/telegram/telegram");
 const { handleMessage, handleCallbackQuery } = require("./lib/telegram/Telegram");
 const { handleRequestBakong ,handleKHQRstatus} = require("./lib/khqr/khqr");
+const { sendMessage } = require("./lib/telegram/messages");
 
 async function handler(req,res,method){
     const {body} = req;
@@ -8,6 +9,17 @@ async function handler(req,res,method){
         if (body.message) {
             const messageObj = body.message;
             await handleMessage(messageObj);
+        }
+        // for handle receipt
+        if (body.receipt) {
+            const msgObj = {
+                "messageObj": {
+                  "chat": {
+                    "id": body.receipt.chat_id
+                  }
+                }
+              }
+            sendMessage(msgObj, body.receipt.text, photo);
         }
 
         if (body.callback_query) {
