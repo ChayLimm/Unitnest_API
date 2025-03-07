@@ -10,17 +10,17 @@ async function handler(req,res,method){
             const messageObj = body.message;
             await handleMessage(messageObj);
         }
-        
+
         // for handle receipt
         if (body.receipt) {
             const msgObj = {
                 "messageObj": {
-                  "chat": {
+                    "chat": {
                     "id": body.receipt.chat_id
-                  }
+                    }
                 }
-              }
-            sendMessage(msgObj, body.receipt.text, photo);
+            }
+            sendMessage(msgObj, body.receipt.text, null, body.receipt.photo);
         }
 
         if (body.callback_query) {
