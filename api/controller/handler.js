@@ -14,13 +14,11 @@ async function handler(req,res,method){
         // for handle receipt
         if (body.receipt) {
             const msgObj = {
-                "messageObj": {
-                    "chat": {
-                    "id": body.receipt.chat_id
-                    }
+                chat: {
+                    id: body.receipt.chat_id
                 }
-            }
-            sendMessage(msgObj, body.receipt.text, null, body.receipt.photo);
+            };
+            sendMessage(msgObj, body.receipt.caption, null, body.receipt.photo);
         }
 
         if (body.callback_query) {
