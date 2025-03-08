@@ -1,7 +1,8 @@
-const { handleRegistration, registrationSteps, checkTenantsRegistered } = require("./registration");
+const { handleRegistration, registrationSteps } = require("./registration");
 const { handlePhotoRequest, paymentRequestSteps   } = require("./payment");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton, registerButton } = require("./buttons");
+const { checkTenantsRegistered } = require("../cloud_function/index");
 
 function clearSteps(chatId) {
     if (registrationSteps[chatId]) {
@@ -18,12 +19,6 @@ async function handleCallbackQuery(callback_query) {
     
     switch (data) {
         case "pay":
-            // paymentRequestSteps[msgObj.chat.id] = { 
-            //     step: 1, 
-            //     chat_id: msgObj.chat.id, 
-            //     photos: []
-            // };
-            // return sendMessage(msgObj, `Please upload photos for request payment:\n- Water Meter\n- Electricity Meter`);
             return handlePhotoRequest(msgObj);
         
         case "rule":
@@ -31,11 +26,6 @@ async function handleCallbackQuery(callback_query) {
             return sendMessage(msgObj, ruleMessage, [payButton, ruleButton]);
 
         case "register":
-            // registrationSteps[msgObj.chat.id] = { 
-            //     step: 1, 
-            //     chat_id: msgObj.chat.id 
-            // };
-            // return sendMessage(msgObj, "Enter your full name:\nExample: John Doe");
             return handleRegistration(msgObj);
 
         default:
@@ -91,9 +81,9 @@ async function handleCommands(messageObj, command) {
         case "start":
             clearSteps(messageObj.chat.id);
 
-            // const isRegistered = await checkTenantsRegistered(messageObj.chat.id);
-            const isRegistered = true;  // just for testing
-
+            // const isRegistered = true;  // just for testing
+            const systemID = 'MF3DBs9vbee9yw0jwfBjK9kIGXs2'; // sample systemId just for testing for now 
+            const isRegistered = await checkTenantsRegistered(systemID, messageObj.chat.id.toString());
             if (isRegistered) {
                 return sendMessage(
                     messageObj,

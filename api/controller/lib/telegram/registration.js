@@ -2,35 +2,10 @@ const fs = require("fs");
 const Joi = require("joi");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton } = require("./buttons");
+const { storeNotification } = require("../cloud_function/index");
 
 const registrationSteps = {}; // track user registration steps
 
-async function checkTenantsRegistered(chat_id) {
-    try {
-        const data = fs.readFileSync('./tenants.json', 'utf-8');
-        const tenants = JSON.parse(data); // Get arrays data (object)
-        for (let i = 0; i < tenants.length; i++) {
-            if (tenants[i].chatId === chat_id) {
-                return true;
-            }
-        }
-        return false;
-    } catch (err) {
-        console.error('Error reading file:', err);
-        return false;
-    }
-}
-
-function saveTenantsRegistration(newTenant) {
-    try {
-        const data = fs.readFileSync('./tenants.json', 'utf-8');
-        const tenants = JSON.parse(data);
-        tenants.push(newTenant);
-        fs.writeFileSync('./tenants.json', JSON.stringify(tenants, null, 2));
-    } catch (err) {
-        console.error('Error reading file:', err);
-    }
-}
 
 function formatValidName(value, helpers) {
     let validName = value
@@ -86,7 +61,9 @@ async function handleRegistration(messageObj) {
     const chatId = messageObj.chat.id;
     const msgText = messageObj.text;
     const step = registrationSteps[chatId]?.step;
-    let systemID = 'MF3DBs9vbee9yw0jwfBjK9kIGXs2'; // sample systemId just for testing for now 
+    const systemID = 'MF3DBs9vbee9yw0jwfBjK9kIGXs2'; // sample systemId just for testing for now 
+    let dataType = "registration";
+    let status = "pending"; 
 
     // check step, initailized step of registration to keep tack
     if (!registrationSteps[chatId]) {
@@ -127,21 +104,30 @@ async function handleRegistration(messageObj) {
             registrationSteps[chatId].registration_date = new Date().toLocaleDateString()
 
             // Prepare the data into JSON forma after all steps are complete
-            // ad system Id just for testing
-            const tenant = {
+
+            // Prepare the data registration into JSON forma after all steps are complete
+            const tenantDataToStore = {
                 systemID: systemID,
-                chatID: chatId,
-                name: registrationSteps[chatId].name,
-                phone: registrationSteps[chatId].phone,
-                idIdentification: registrationSteps[chatId].id_Identification,
-                registeredOn: registrationSteps[chatId].registration_date,
+                chatID: chatId.toString(),
+                dataType: dataType,
+                read: false,
+                status: status,
+                notifyData:{
+                    chatID: chatId.toString(),
+                    name: registrationSteps[chatId].name.toString(),
+                    phone: registrationSteps[chatId].phone.toString(),
+                    idIdentification: registrationSteps[chatId].id_Identification.toString(),
+                    registerOnDate: registrationSteps[chatId].registration_date,
+                }
+
             };
 
-            console.log("Received Registration data:", JSON.stringify(tenant, null, 2));
+            console.log("Received Registration data:", JSON.stringify(tenantDataToStore, null, 2)); // print in console
 
-            // Save tenant data to file
-            // saveTenantsRegistration(tenant);
-            delete registrationSteps[chatId]; // Registration complete
+            // store tenant register data to firebase
+            storeNotification(systemID, tenantDataToStore);
+
+            delete registrationSteps[chatId]; // Registration complete, clear step
 
             return sendMessage(
                 messageObj,
@@ -161,8 +147,6 @@ async function handleRegistration(messageObj) {
 }
 
 module.exports = { 
-    checkTenantsRegistered, 
-    saveTenantsRegistration,
     registrationSteps,
     handleRegistration
  };
