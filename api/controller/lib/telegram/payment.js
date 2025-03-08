@@ -1,8 +1,9 @@
 require('dotenv').config();
 const { axiosInstance } = require("../axios");
 const { sendMessage } = require("./messages");
-const FormData = require('form-data');
-const fs = require('fs');
+const axios = require("axios");
+// const FormData = require('form-data');
+// const fs = require('fs');
 
 const Token = process.env.BOT_TOKEN;
 
@@ -118,7 +119,7 @@ async function handlePhotoRequest(msgObj) {
 // process photo to flask api for detection img
 async function sendPhotosToAPI(photo1Url, photo2Url) {
     try {    
-        console.log("Sending payload to Flask API:", payload); // Debugging
+        // console.log("Sending payload to Flask API:", payload); // Debugging
 
         // Use Axios directly, request POST 
         const response = await axios.post(
