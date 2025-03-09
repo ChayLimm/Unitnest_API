@@ -2,6 +2,7 @@ require('dotenv').config();
 const { axiosInstance } = require("../axios");
 const { sendMessage } = require("./messages");
 const axios = require("axios");
+const { storeNotification } = require("../cloud_function/index");
 // const FormData = require('form-data');
 // const fs = require('fs');
 
@@ -117,6 +118,7 @@ async function handlePhotoRequest(msgObj) {
 
 
 // process photo to flask api for detection img
+
 async function sendPhotosToAPI(photo1Url, photo2Url) {
     try {    
         // console.log("Sending payload to Flask API:", payload); // Debugging
@@ -154,13 +156,15 @@ async function sendPhotosToAPI(photo1Url, photo2Url) {
 
 function savePayRequestData(msgObj, ResponeData, state) {
     if (ResponeData) {
-        let waterMeter = null;
-        let electricityMeter = null;
-        let waterAccuracy = null;
-        let electricityAccuracy = null;
-        let photo1 = null; 
-        let photo2 = null;
+        let waterMeter ;
+        let electricityMeter ;
+        let waterAccuracy;
+        let electricityAccuracy ;
+        let photo1; 
+        let photo2;
         let systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // sample systemId for testing
+        let dataType = "paymentRequest";
+        let status = "pending"; 
 
         // Ensure state and photos are available
         if (state && state.photos.length === 2) {
@@ -171,31 +175,52 @@ function savePayRequestData(msgObj, ResponeData, state) {
         // Iterate over the photo data to extract meter info
         for (let i in ResponeData){
             let meter = ResponeData[i];
+
             if (meter['Meter Type'] === 'Water') {
-                waterMeter = meter['Meter Number'];
-                waterAccuracy = meter['Accuracy'];
+                waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
+                waterAccuracy = parseFloat(meter['Accuracy']);  // Convert to float (double)
             }
             if (meter['Meter Type'] === 'Electricity') {
-                electricityMeter = meter['Meter Number'];
-                electricityAccuracy = meter['Accuracy'];
+                electricityMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
+                electricityAccuracy = parseFloat(meter['Accuracy']);  // Convert to float (double)
             }
+        
+            // if (meter['Meter Type'] === 'Water') {
+            //     waterMeter = meter['Meter Number'];
+            //     waterAccuracy = meter['Accuracy'];
+            // }
+            // if (meter['Meter Type'] === 'Electricity') {
+            //     electricityMeter = meter['Meter Number'];
+            //     electricityAccuracy = meter['Accuracy'];
+            // }
+
         }
     
-        // Prepare the data payment request to json format
-        const dataToSave = {
+        // Prepare the data paymnet request to json format
+        const payReqDataToStore = {
             systemID: systemId,
-            chatID: msgObj.chat.id,
-            date: new Date().toLocaleDateString(),  
-            waterMeter: waterMeter,
-            electricity: electricityMeter,
-            waterAccuracy: waterAccuracy,
-            electricityAccuracy: electricityAccuracy,
-            photo1URL: photo1,
-            Photo2URL: photo2
+            chatID: msgObj.chat.id.toString(),
+            dataType: dataType,
+            read: false,
+            status: status,
+            notifyData:{
+                requestDateOn: new Date().toISOString(),  
+                water: waterMeter,
+                electricity: electricityMeter,
+                waterAccuracy: waterAccuracy,
+                electricityAccuracy: electricityAccuracy,
+                photo1URL: photo1,
+                photo2URL: photo2
+            }
         };
 
         console.log('\nRetrive Data From Api after done payment request!!')
-        console.log(JSON.stringify(dataToSave, null, 2));  
+        console.log(JSON.stringify(payReqDataToStore, null, 2));  
+
+        // store to firebase in collection notification
+        storeNotification(systemId, payReqDataToStore);
+        
+
       } else {
         console.error("No data received from the Flask API");
       }
