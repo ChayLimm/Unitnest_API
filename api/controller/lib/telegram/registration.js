@@ -1,4 +1,3 @@
-const fs = require("fs"); 
 const Joi = require("joi");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton } = require("./buttons");
