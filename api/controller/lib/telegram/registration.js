@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton } = require("./buttons");
-// const { storeNotification } = require("../cloud_function/index");
+const { storeNotification } = require("../cloud_function/index");
 
 const registrationSteps = {}; // track user registration steps
 
@@ -124,7 +124,7 @@ async function handleRegistration(messageObj) {
             console.log("Received Registration data:", JSON.stringify(tenantDataToStore, null, 2)); // print in console
 
             // store tenant register data to firebase
-            // storeNotification(systemID, tenantDataToStore);
+            storeNotification(systemID, tenantDataToStore);
 
             delete registrationSteps[chatId]; // Registration complete, clear step
 

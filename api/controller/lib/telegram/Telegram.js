@@ -2,7 +2,7 @@ const { handleRegistration, registrationSteps } = require("./registration");
 const { handlePhotoRequest, paymentRequestSteps   } = require("./payment");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton, registerButton } = require("./buttons");
-// const { checkTenantsRegistered } = require("../cloud_function/index");
+const { checkTenantsRegistered } = require("../cloud_function/index");
 
 function clearSteps(chatId) {
     if (registrationSteps[chatId]) {
@@ -81,9 +81,9 @@ async function handleCommands(messageObj, command) {
         case "start":
             clearSteps(messageObj.chat.id);
 
-            const isRegistered = true;  // just for testing
+            // const isRegistered = true;  // just for testing
             const systemID = 'MF3DBs9vbee9yw0jwfBjK9kIGXs2'; // sample systemId just for testing for now 
-            // const isRegistered = await checkTenantsRegistered(systemID, messageObj.chat.id.toString());
+            const isRegistered = await checkTenantsRegistered(systemID, messageObj.chat.id.toString());
             if (isRegistered) {
                 return sendMessage(
                     messageObj,
