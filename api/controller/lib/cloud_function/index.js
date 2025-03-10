@@ -1,7 +1,7 @@
 // require('dotenv').config();
 
 const admin = require('firebase-admin');
-const serviceAccount = require("../../../../config/serviceAccountKey.json");  // get account key to access to firebase project
+const serviceAccount = require("../../../../serviceAccountKey.json");  // get account key to access to firebase project
 
 // /// Testing to access firebase sdk
 // const serviceAccount = {
@@ -87,7 +87,7 @@ async function checkTenantsRegistered(systemID, chatId) {
       console.log(`Tenant with this ChatID ${chatId} is already registered under system ${systemID}`);
       
       // Debug: Print out the first found document for further analysis
-      console.log("Matching document data:", query.docs[0].data());
+      // console.log("Matching document data:", query.docs[0].data());
       
       return true;
     }
