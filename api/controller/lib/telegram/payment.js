@@ -2,7 +2,7 @@ require('dotenv').config();
 const { axiosInstance } = require("../axios");
 const { sendMessage } = require("./messages");
 const axios = require("axios"); 
-const { storeNotification } = require("../../../config/serviceAccountKey.json");
+const { storeNotification } = require("../cloud_function/index");
 
 
 const Token = process.env.BOT_TOKEN;

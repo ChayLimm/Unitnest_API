@@ -23,8 +23,6 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-console.log('Firebase initialized successfully!');
-
 
 // // // debuging the specific json file path
 // // console.log('Resolved path:', serviceAccount);
