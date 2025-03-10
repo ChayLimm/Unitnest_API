@@ -2,7 +2,7 @@ require('dotenv').config();
 const { axiosInstance } = require("../axios");
 const { sendMessage } = require("./messages");
 const axios = require("axios");
-const { storeNotification } = require("../cloud_function/index");
+// const { storeNotification } = require("../cloud_function/index");
 // const FormData = require('form-data');
 // const fs = require('fs');
 
@@ -218,7 +218,7 @@ function savePayRequestData(msgObj, ResponeData, state) {
         console.log(JSON.stringify(payReqDataToStore, null, 2));  
 
         // store to firebase in collection notification
-        storeNotification(systemId, payReqDataToStore);
+        // storeNotification(systemId, payReqDataToStore);
         
 
       } else {
