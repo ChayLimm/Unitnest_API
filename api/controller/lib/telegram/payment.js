@@ -215,6 +215,7 @@ function savePayRequestData(msgObj, ResponeData, state) {
             dataType: dataType,
             read: false,
             status: status,
+            isApprove: false,
             notifyData:{
                 requestDateOn: new Date().toISOString(),  
                 water: waterMeter,
