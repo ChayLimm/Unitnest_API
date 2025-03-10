@@ -178,11 +178,11 @@ function savePayRequestData(msgObj, ResponeData, state) {
 
             if (meter['Meter Type'] === 'Water') {
                 waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
-                waterAccuracy = parseFloat(meter['Accuracy']);  // Convert to float (double)
+                waterAccuracy = parseFloat(meter['Accuracy']);  
             }
             if (meter['Meter Type'] === 'Electricity') {
-                electricityMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
-                electricityAccuracy = parseFloat(meter['Accuracy']);  // Convert to float (double)
+                electricityMeter = parseFloat(meter['Meter Number']); 
+                electricityAccuracy = parseFloat(meter['Accuracy']);  
             }
         
             // if (meter['Meter Type'] === 'Water') {

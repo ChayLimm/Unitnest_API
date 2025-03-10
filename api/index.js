@@ -2,12 +2,13 @@
 require('dotenv').config();
 const express = require("express");
 const axios = require("axios");
-const serverless = require("serverless-http");
+// const serverless = require("serverless-http");
 
 const { handler } = require("./controller/handler");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const WEBHOOK_URL = 'https://unitnest-api.vercel.app/telegram';
+// const WEBHOOK_URL = 'https://unitnest-api.vercel.app/telegram';
+const WEBHOOK_URL = 'https://ebb8-118-67-205-224.ngrok-free.app/telegram';
 
 const app = express();
 app.use(express.json());
@@ -50,7 +51,7 @@ app.post("/khqrstatus", async(req, res) => {
     }
 });
 
-// console.log(process.env.BOT_TOKEN); // Check if BOT_TOKEN is loaded correctly
+console.log(process.env.BOT_TOKEN); // Check if BOT_TOKEN is loaded correctly
 
 // Set webhook for Telegram after deployment
 const setWebhook = async () => {
@@ -68,5 +69,5 @@ setWebhook();
 
 
 // Export the app for Vercel's serverless function
-module.exports = app;
-module.exports.handler = serverless(app);
+// module.exports = app;
+// module.exports.handler = serverless(app);
