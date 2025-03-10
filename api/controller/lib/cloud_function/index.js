@@ -1,15 +1,13 @@
-require('dotenv').config();
 const admin = require('firebase-admin');
 // const serviceAccount = require('../../../config/serviceAccountKey.json');  // get account key to access to firebase project
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
+// Load the service account from an environment variable
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
-// testing
 admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
+  credential: admin.credential.cert(serviceAccount),
 });
+
 
 
 const db = admin.firestore();
