@@ -110,6 +110,7 @@ async function handleRegistration(messageObj) {
                 dataType: dataType,
                 read: false,
                 status: status,
+                isApprove: false,
                 notifyData:{
                     name: registrationSteps[chatId].name.toString(),
                     phone: registrationSteps[chatId].phone.toString(),
@@ -129,17 +130,16 @@ async function handleRegistration(messageObj) {
 
             delete registrationSteps[chatId]; // Registration complete
 
-            return sendMessage(
-                messageObj,
-                "Welcome! Your registration is successful.Here are the options that u can proceed with.",
-                [payButton, ruleButton]
-            );
-
             // return sendMessage(
             //     messageObj,
-            //     "Please waiting for landlord to approve your registration.",
-            //     []
+            //     "Welcome! Your registration is successful.Here are the options that u can proceed with.",
+            //     [payButton, ruleButton]
             // );
+
+            return sendMessage(
+                messageObj,
+                "Please waiting for landlord to approve your registration.",
+            );
 
         default:
             return sendMessage(messageObj, "Sorry, I don't understand.");

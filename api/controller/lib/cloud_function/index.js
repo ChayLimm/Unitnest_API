@@ -77,8 +77,10 @@ async function checkTenantsRegistered(systemId, chatId) {
     const notificationRef = systemDocRef.collection('notificationList');
     const query = await notificationRef
       .where('dataType', '==', 'registration') 
-      .where('chatID', '==', chatId.toString()) 
+      .where('chatID', '==', chatId.toString())
+      .where('isApprove', '==', true)
       .get();
+
 
     console.log(`Query executed. Found ${query.docs.length} matching documents.`);
 
