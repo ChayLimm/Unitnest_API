@@ -1,7 +1,7 @@
 // require('dotenv').config();
 
 const admin = require('firebase-admin');
-const serviceAccount = require('../../config/serviceAccountKey.json');  // get account key to access to firebase project
+// const serviceAccount = require('../../config/serviceAccountKey.json');  // get account key to access to firebase project
 
 // /// Testing to access firebase sdk
 // const serviceAccount = {
@@ -16,6 +16,18 @@ const serviceAccount = require('../../config/serviceAccountKey.json');  // get a
 //   auth_provider_x509_cert_url: process.env.SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL,
 //   client_x509_cert_url: process.env.SERVICE_ACCOUNT_CLIENT_X509_CERT_URL,
 // };
+
+
+// debuging the specific json file path
+const serviceAccount = path.resolve(__dirname, '../../config/serviceAccountKey.json');
+console.log('Resolved path:', serviceAccount);
+
+if (fs.existsSync(serviceAccount)) {
+  console.log('File exists at:', serviceAccount);
+} else {
+  console.error('File does not exist at:', serviceAccount);
+}
+
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
