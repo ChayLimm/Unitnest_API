@@ -1,6 +1,6 @@
 
 const { handleRegistration, registrationSteps } = require("./registration");
-const { handlePhotoRequest, paymentRequestSteps   } = require("./payment");
+const { handlePhotoRequest, paymentRequestSteps  } = require("./payment");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton, registerButton } = require("./buttons");
 const { checkTenantsRegistered } = require("../cloud_function/index");
@@ -116,9 +116,7 @@ async function handleCommands(messageObj, command) {
 module.exports = { 
     handleMessage, 
     handleCallbackQuery,
-    sendMessage,
-    payButton,
-    ruleButton
+    handleCommands
  };
 
 
