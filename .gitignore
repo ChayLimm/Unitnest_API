@@ -1,4 +1,4 @@
 # Ignore Firebase credentials and environment files
 .env
 # serviceAccountKey.json
-api/controller/config/serviceAccountKey.json
+api/config/serviceAccountKey.json
