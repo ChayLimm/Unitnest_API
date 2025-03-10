@@ -1,3 +1,4 @@
+const fs = require("fs"); 
 const Joi = require("joi");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton } = require("./buttons");
@@ -59,12 +60,11 @@ const registrationSchema = Joi.object({
 async function handleRegistration(messageObj) {
     const chatId = messageObj.chat.id;
     const msgText = messageObj.text;
-    const step = registrationSteps[chatId]?.step;
-    const systemID = 'MF3DBs9vbee9yw0jwfBjK9kIGXs2'; // sample systemId just for testing for now 
+    const step = registrationSteps[chatId]?.step; 
+    let systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // sample systemId for testing
     let dataType = "registration";
     let status = "pending"; 
 
-    // check step, initailized step of registration to keep tack
     if (!registrationSteps[chatId]) {
             registrationSteps[chatId] = { 
                 step: 1, 
@@ -73,12 +73,12 @@ async function handleRegistration(messageObj) {
             return sendMessage(messageObj, "Enter your full name:\nExample: John Doe");
     }
 
-    // flow of register following steps
     switch (step) {
         case 1:
             // Validate name
             const { error: nameErr, value: validName } = Joi.object({ name: registrationSchema.extract("name") })
             .validate({ name: msgText });
+        
             if (nameErr) return sendMessage(messageObj, "Invalid Name, pls re-enter:\nExample: Jonh Doe");
             
             registrationSteps[chatId].name = validName.name; // Store cleaned-up name
@@ -98,21 +98,19 @@ async function handleRegistration(messageObj) {
             // Validate ID card number
             const { error: idIdentifyErr, value: validIdentify } = Joi.object({ idIdentification: registrationSchema.extract("idIdentification")}).validate({ idIdentification: msgText });
             if (idIdentifyErr) return sendMessage(messageObj, "Invalid ID Identify number, pls re-enter:\nExample: 1234567890");
-            
-            registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
-            registrationSteps[chatId].registration_date = new Date().toLocaleDateString()
 
-            // Prepare the data into JSON forma after all steps are complete
+            // registrationSteps[chatId].id_Identification = msgText;
+            registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
+            registrationSteps[chatId].registration_date = new Date().toISOString();
 
             // Prepare the data registration into JSON forma after all steps are complete
             const tenantDataToStore = {
-                systemID: systemID,
+                systemID: systemId,
                 chatID: chatId.toString(),
                 dataType: dataType,
                 read: false,
                 status: status,
                 notifyData:{
-                    chatID: chatId.toString(),
                     name: registrationSteps[chatId].name.toString(),
                     phone: registrationSteps[chatId].phone.toString(),
                     idIdentification: registrationSteps[chatId].id_Identification.toString(),
@@ -121,12 +119,15 @@ async function handleRegistration(messageObj) {
 
             };
 
-            console.log("Received Registration data:", JSON.stringify(tenantDataToStore, null, 2)); // print in console
+            console.log("Received Registration data:", JSON.stringify(tenantDataToStore, null, 2));
 
-            // store tenant register data to firebase
-            storeNotification(systemID, tenantDataToStore);
+            // Save tenant data to file, just testing in local
+            // saveTenantsRegistration(tenantDataToStore);
 
-            delete registrationSteps[chatId]; // Registration complete, clear step
+            // store to firebase use cloud function 
+            storeNotification(systemId, tenantDataToStore);
+
+            delete registrationSteps[chatId]; // Registration complete
 
             return sendMessage(
                 messageObj,

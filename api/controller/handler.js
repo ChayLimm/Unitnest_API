@@ -1,9 +1,9 @@
-// const { handleMessage , handleCallbackQuery} = require("./lib/telegram/telegram");
 const { handleMessage, handleCallbackQuery } = require("./lib/telegram/Telegram");
 const { handleRequestBakong ,handleKHQRstatus} = require("./lib/khqr/khqr");
 const { sendMessage } = require("./lib/telegram/messages");
 
 async function handler(req,res,method){
+    
     const {body} = req;
     if (body) {
         if (body.message) {

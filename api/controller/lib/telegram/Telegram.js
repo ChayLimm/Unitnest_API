@@ -1,8 +1,10 @@
+
 const { handleRegistration, registrationSteps } = require("./registration");
 const { handlePhotoRequest, paymentRequestSteps   } = require("./payment");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton, registerButton } = require("./buttons");
 const { checkTenantsRegistered } = require("../cloud_function/index");
+
 
 function clearSteps(chatId) {
     if (registrationSteps[chatId]) {
@@ -19,13 +21,24 @@ async function handleCallbackQuery(callback_query) {
     
     switch (data) {
         case "pay":
+            // paymentRequestSteps[msgObj.chat.id] = { 
+            //     step: 1, 
+            //     chat_id: msgObj.chat.id, 
+            //     photos: []
+            // };
+            // return sendMessage(msgObj, `Please upload photos for request payment:\n- Water Meter\n- Electricity Meter`);
             return handlePhotoRequest(msgObj);
         
         case "rule":
-            const ruleMessage = `កំណត់សម្គាល់:\n\n1. រាល់ការបង់ប្រាក់យឺតលើសពី 5 ថ្ងៃនៃថ្ងៃកំណត់ (ថ្ងៃទី 1 ដើមខែ) នឹងត្រូវពិន័យមួយថ្ងៃ 3 ដុល្លារ។\n2.​ ត្រូវបង់ប្រាក់បន្ទប់,ទឹក,ភ្លើងរាល់ថ្ងៃដើមខែដោយភ្ជាប់មកជាមួយបង្កាន់ដៃមួយសន្លឹក។\n3. ត្រូវធ្វើការផ្លាស់ប្ដូរសម្ភារៈក្នុងបន្ទប់ដែលខូចក្នុងអំឡុងពេលស្នាក់នៅដោយខ្លួនឯង។\n4. ត្រូវជូនដំណឹងដល់ម្ចាស់បន្ទប់យ៉ាងតិចណាស់ 15 ថ្ងៃមុននឹងបញ្ឈប់ការជួលនិងសម្អាតបន្ទប់ឲ្យបានស្អាតមុននឹងចាកចេញបើមិនដូច្នេះទេម្ចាស់បន្ទប់មានសិទ្ធិកាត់ប្រាក់កក់ចំនួន 20 ដុល្លាររបស់លោកអ្នក។\n5. ត្រូវគោរពបទបញ្ជាផ្ទៃក្នុងរបស់បន្ទប់ជួល។`;
+            const ruleMessage = `កំណត់សម្គាល់.\n\n1. រាល់ការបង់ប្រាក់យឺតលើសពី 5 ថ្ងៃនៃថ្ងៃកំណត់ (ថ្ងៃទី 1 ដើមខែ) នឹងត្រូវពិន័យមួយថ្ងៃ 3 ដុល្លារ។\n2. ត្រូវបង់ប្រាក់បន្ទប់,ទឹក,ភ្លើងរាល់ថ្ងៃដើមខែដោយភ្ជាប់មកជាមួយបង្កាន់ដៃមួយសន្លឹក។\n3. ត្រូវធ្វើការផ្លាស់ប្ដូរសម្ភារៈក្នុងបន្ទប់ដែលខូចក្នុងអំឡុងពេលស្នាក់នៅដោយខ្លួនឯង។\n4. ត្រូវជូនដំណឹងដល់ម្ចាស់បន្ទប់យ៉ាងតិចណាស់ 15 ថ្ងៃមុននឹងបញ្ឈប់ការជួលនិងសម្អាតបន្ទប់ឲ្យបានស្អាតមុននឹងចាកចេញបើមិនដូច្នេះទេម្ចាស់បន្ទប់មានសិទ្ធិកាត់ប្រាក់កក់ចំនួន 20 ដុល្លាររបស់លោកអ្នក។\n5. ត្រូវគោរពបទបញ្ជាផ្ទៃក្នុងរបស់បន្ទប់ជួល។`;
             return sendMessage(msgObj, ruleMessage, [payButton, ruleButton]);
 
         case "register":
+            // registrationSteps[msgObj.chat.id] = { 
+            //     step: 1, 
+            //     chat_id: msgObj.chat.id 
+            // };
+            // return sendMessage(msgObj, "Enter your full name:\nExample: John Doe");
             return handleRegistration(msgObj);
 
         default:
@@ -68,8 +81,6 @@ async function handleMessage(messageObj) {
         }
 
         
-
-        
     } catch (error) {
         console.error("Error Message: ",error.message);
     }
@@ -81,9 +92,9 @@ async function handleCommands(messageObj, command) {
         case "start":
             clearSteps(messageObj.chat.id);
 
-            // const isRegistered = true;  // just for testing
-            const systemID = 'MF3DBs9vbee9yw0jwfBjK9kIGXs2'; // sample systemId just for testing for now 
-            const isRegistered = await checkTenantsRegistered(systemID, messageObj.chat.id.toString());
+
+            const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
+            const isRegistered = await checkTenantsRegistered(systemId, messageObj.chat.id);
             if (isRegistered) {
                 return sendMessage(
                     messageObj,
@@ -104,8 +115,11 @@ async function handleCommands(messageObj, command) {
 
 module.exports = { 
     handleMessage, 
-    handleCallbackQuery
-};
+    handleCallbackQuery,
+    sendMessage,
+    payButton,
+    ruleButton
+ };
 
 
 

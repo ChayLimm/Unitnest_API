@@ -1,19 +1,18 @@
 require('dotenv').config();
 const { axiosInstance } = require("../axios");
 const { sendMessage } = require("./messages");
-const axios = require("axios");
-const { storeNotification } = require("../cloud_function/index");
-// const FormData = require('form-data');
-// const fs = require('fs');
+const axios = require("axios"); 
+const { storeNotification } = require("../../../config/serviceAccountKey.json");
+
 
 const Token = process.env.BOT_TOKEN;
-
 const paymentRequestSteps = {}; // track users expecting payment images
 
 // Handle photo (image) messages
 async function handlePhotoRequest(msgObj) {
     const chatId = msgObj.chat.id;
     const photo = msgObj.photo;
+    const msgDoc = msgObj.document;
     const msgText = msgObj.text;
 
     if (!paymentRequestSteps[chatId]) {
@@ -37,7 +36,7 @@ async function handlePhotoRequest(msgObj) {
             return sendMessage(msgObj, "No photo received!!");
         }
 
-        const fileId = photo[photo.length - 1].file_id;   // Get fileId of last photo in array (high size)
+        const fileId = photo[photo.length - 1].file_id;   // Get fileId of last photo in array (high size
 
         try {
             const photoDetails = await axiosInstance.get(
@@ -54,7 +53,7 @@ async function handlePhotoRequest(msgObj) {
                     filePath: photoData.file_path,
                     fileUrl: `https://api.telegram.org/file/bot${Token}/${photoData.file_path}`,
                     caption: msgObj.caption || '',
-                    receivedAt: new Date().toLocaleDateString(),
+                    receivedAt: new Date().toISOString(),
                 };
 
                 state.photos.push(photoInfo);
@@ -71,28 +70,33 @@ async function handlePhotoRequest(msgObj) {
                         "Thank you! Your payment request is processing."
                     );
                     state.step = 2; // Completed step for payment request
+
                     // console.log("Received Both Photo:", state.photos);
 
-                    // // Use dummy data for testing
+                    
+                    // Use dummy data for testing
                     // const dummyData = [
                     //     {
                     //         "Meter Type": "Water",
-                    //         "Meter Number": "12345",
+                    //         "Meter Number": "12365",
                     //         "Accuracy": "98%"
                     //     },
                     //     {
                     //         "Meter Type": "Electricity",
-                    //         "Meter Number": "67890",
+                    //         "Meter Number": "67891",
                     //         "Accuracy": "95%"
                     //     }
                     // ];
 
-                    const response = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
-                    if (!response) {
+
+                    //Send photos to Flask API for processing
+                    
+                    const responseData = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
+                    if (!responseData) {
                         return sendMessage(msgObj, "Error processing payment request.");
                     }
 
-                    savePayRequestData(msgObj, response, state);   // Use dummy data for testing -> use response data from api 
+                    savePayRequestData(msgObj, responseData, state);   // Use dummy data for testing
                     delete paymentRequestSteps[chatId]; // Payment request complete
                     state.photos = [];   // Clear stored photos
 
@@ -117,39 +121,39 @@ async function handlePhotoRequest(msgObj) {
     // }
 
 
-// process photo to flask api for detection img
+    async function sendPhotosToAPI(photo1Url, photo2Url) {
+        try {    
+            // console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
 
-async function sendPhotosToAPI(photo1Url, photo2Url) {
-    try {    
-        // console.log("Sending payload to Flask API:", payload); // Debugging
+            // Use Axios directly, request POST 
+            const response = await axios.post(
+                'https://91c3-103-16-62-134.ngrok-free.app/process', 
+                { 
+                    image_urls: [photo1Url, photo2Url] 
+                },
+                { 
+                    headers: { 'Content-Type': 'application/json' } 
+                }
+            );
 
-        // Use Axios directly, request POST 
-        const response = await axios.post(
-            'https://66c0-203-144-80-238.ngrok-free.app/process', 
-            { 
-                image_urls: [photo1Url, photo2Url] 
-            },
-            { 
-                headers: { 'Content-Type': 'application/json' } 
+            console.log("API Response:", response.data); // Debugging
+    
+            if (response.status === 200) {
+                return response.data; // Return the JSON data from Flask API
+            } else {
+                console.error("Error: API request failed with status code", response.status);
+                return null;
             }
-        );
-
-        console.log("API Response:", response.data); // Debugging
-
-        if (response.status === 200) {
-            return response.data; // Return the JSON data from Flask API
-        } else {
-            console.error("Error: API request failed with status code", response.status);
+        } catch (error) {
+            console.error("Error sending photos to API:", error.message);
+            if (error.response) {
+                console.error("API Response Error:", error.response.data); // Debugging
+            }
             return null;
         }
-    } catch (error) {
-        console.error("Error sending photos to API:", error.message);
-        if (error.response) {
-            console.error("API Response Error:", error.response.data); // Debugging
-        }
-        return null;
     }
-}
+
+
 
 // add system id for notify to correct system of landlord that own the system
 // add const system Id (for notify and send data to the right system of landlord)
@@ -171,28 +175,36 @@ function savePayRequestData(msgObj, ResponeData, state) {
             photo1 = state.photos[0].fileUrl;
             photo2 = state.photos[1].fileUrl;
         }
-    
-        // Iterate over the photo data to extract meter info
-        for (let i in ResponeData){
-            let meter = ResponeData[i];
 
-            if (meter['Meter Type'] === 'Water') {
-                waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
-                waterAccuracy = parseFloat(meter['Accuracy']);  
+        // handle error api res
+        if(ResponeData['undefined']){  // if api return error only one (single obj)
+            console.error("API Response Error: ", ResponeData.error);
+            waterMeter = null;
+            electricityMeter = null;
+            waterAccuracy = null;
+            electricityAccuracy = null;
+
+        }else{
+            // Iterate over the photo data to extract meter info
+            for (let i in ResponeData){
+                let meter = ResponeData[i];
+
+                if (meter['message']){
+                    console.error("Error msg in reponse: ", meter.error);
+                    // handle value to null -> so format store just have two photo and null value of other info
+                    waterMeter = electricityMeter = null;
+                    waterAccuracy = electricityAccuracy = null;
+                    break;  // exit if meet that error
+                }
+
+                if (meter['Meter Type'] === 'Water') {
+                    waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
+                    waterAccuracy = parseFloat(meter['Accuracy']);  
+                }else if (meter['Meter Type'] === 'Electricity') {
+                    electricityMeter = parseFloat(meter['Meter Number']); 
+                    electricityAccuracy = parseFloat(meter['Accuracy']);  
+                }
             }
-            if (meter['Meter Type'] === 'Electricity') {
-                electricityMeter = parseFloat(meter['Meter Number']); 
-                electricityAccuracy = parseFloat(meter['Accuracy']);  
-            }
-        
-            // if (meter['Meter Type'] === 'Water') {
-            //     waterMeter = meter['Meter Number'];
-            //     waterAccuracy = meter['Accuracy'];
-            // }
-            // if (meter['Meter Type'] === 'Electricity') {
-            //     electricityMeter = meter['Meter Number'];
-            //     electricityAccuracy = meter['Accuracy'];
-            // }
 
         }
     
@@ -230,3 +242,4 @@ module.exports = {
     handlePhotoRequest,
     paymentRequestSteps
 };
+
