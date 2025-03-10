@@ -1,7 +1,7 @@
 // require('dotenv').config();
 
 const admin = require('firebase-admin');
-const serviceAccount = require("../../../../serviceAccountKey.json");  // get account key to access to firebase project
+const serviceAccount = require('../../config/serviceAccountKey.json');  // get account key to access to firebase project
 
 // /// Testing to access firebase sdk
 // const serviceAccount = {
