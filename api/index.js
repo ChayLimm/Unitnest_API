@@ -10,8 +10,11 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const WEBHOOK_URL = 'https://unitnest-api.vercel.app/telegram';
 // const WEBHOOK_URL = 'https://ebb8-118-67-205-224.ngrok-free.app/telegram';
 
-const app = express();
-app.use(express.json());
+// const app = express();
+// app.use(express.json());
+
+const cors = require('cors');
+app.use(cors());
 
 app.get('/test', (req, res) => {
     res.send('hello');
