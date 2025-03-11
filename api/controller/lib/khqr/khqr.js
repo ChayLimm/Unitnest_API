@@ -2,6 +2,8 @@ require('dotenv').config();
 // const { axiosInstance } = require("../axios");
 const axios = require('axios');
 
+const TOKEN = process.env.KHQR_TOKEN;
+
 
 function handleRequestBakong(body, res) {
     body.amount = Number(body.amount); // Ensure it's a number
@@ -70,7 +72,6 @@ function handleRequestBakong(body, res) {
 }
 
 async function handleKHQRstatus(md5,res) {
-    const TOKEN = process.env.KHQR_TOKEN;
     const url = "https://api-bakong.nbc.gov.kh/v1/check_transaction_by_md5";
     try {
         const response = await axios({
@@ -98,6 +99,8 @@ async function handleKHQRstatus(md5,res) {
         }
     }
 }
+
+console.log(TOKEN); // debug
 
 
 module.exports = { handleRequestBakong,handleKHQRstatus };

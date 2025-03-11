@@ -21,12 +21,6 @@ async function handleCallbackQuery(callback_query) {
     
     switch (data) {
         case "pay":
-            // paymentRequestSteps[msgObj.chat.id] = { 
-            //     step: 1, 
-            //     chat_id: msgObj.chat.id, 
-            //     photos: []
-            // };
-            // return sendMessage(msgObj, `Please upload photos for request payment:\n- Water Meter\n- Electricity Meter`);
             return handlePhotoRequest(msgObj);
         
         case "rule":
@@ -34,11 +28,6 @@ async function handleCallbackQuery(callback_query) {
             return sendMessage(msgObj, ruleMessage, [payButton, ruleButton]);
 
         case "register":
-            // registrationSteps[msgObj.chat.id] = { 
-            //     step: 1, 
-            //     chat_id: msgObj.chat.id 
-            // };
-            // return sendMessage(msgObj, "Enter your full name:\nExample: John Doe");
             return handleRegistration(msgObj);
 
         default:

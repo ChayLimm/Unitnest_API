@@ -1,4 +1,3 @@
-const fs = require("fs"); 
 const Joi = require("joi");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton } = require("./buttons");
@@ -100,7 +99,6 @@ async function handleRegistration(messageObj) {
             const { error: idIdentifyErr, value: validIdentify } = Joi.object({ idIdentification: registrationSchema.extract("idIdentification")}).validate({ idIdentification: msgText });
             if (idIdentifyErr) return sendMessage(messageObj, "Invalid ID Identify number, pls re-enter:\nExample: 1234567890");
 
-            // registrationSteps[chatId].id_Identification = msgText;
             registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
             registrationSteps[chatId].registration_date = new Date().toISOString();
 
@@ -132,15 +130,9 @@ async function handleRegistration(messageObj) {
 
             delete registrationSteps[chatId]; // Registration complete
 
-            // return sendMessage(
-            //     messageObj,
-            //     "Welcome! Your registration is successful.Here are the options that u can proceed with.",
-            //     [payButton, ruleButton]
-            // );
-
             return sendMessage(
                 messageObj,
-                "Please waiting for landlord to approve your registration.",
+                "Please waiting for landlord to approve your registration!",
             );
 
         default:
