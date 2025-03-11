@@ -1,6 +1,7 @@
 // require('dotenv').config({ path: '/../.env' });
 require('dotenv').config();
 const express = require("express");
+const cors = require("cors");
 const axios = require("axios");
 const serverless = require("serverless-http");
 
@@ -13,7 +14,7 @@ const WEBHOOK_URL = 'https://unitnest-api.vercel.app/telegram';
 // const app = express();
 // app.use(express.json());
 
-const cors = require('cors');
+const app = express();
 app.use(cors());
 
 app.get('/test', (req, res) => {
