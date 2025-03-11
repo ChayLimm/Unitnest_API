@@ -105,7 +105,7 @@ async function handleRegistration(messageObj) {
 
             // Prepare the data registration into JSON forma after all steps are complete
             const tenantDataToStore = {
-                id: new Date().getMilliseconds().toString(),
+                id: uuidv4(),
                 systemID: systemId,
                 chatID: chatId.toString(),
                 dataType: dataType,

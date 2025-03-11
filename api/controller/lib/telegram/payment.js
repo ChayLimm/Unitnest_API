@@ -1,8 +1,10 @@
 require('dotenv').config();
+import { v4 as uuidv4} from 'uuid';
 const { axiosInstance } = require("../axios");
 const { sendMessage } = require("./messages");
 const axios = require("axios"); 
 const { storeNotification } = require("../cloud_function/index");
+
 
 
 const Token = process.env.BOT_TOKEN;
@@ -190,7 +192,7 @@ function savePayRequestData(msgObj, ResponeData, state) {
     
         // Prepare the data paymnet request to json format
         const payReqDataToStore = {
-            id: new Date().getMilliseconds().toString(),
+            id: uuidv4(),
             systemID: systemId,
             chatID: msgObj.chat.id.toString(),
             dataType: dataType,
