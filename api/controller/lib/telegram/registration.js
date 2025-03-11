@@ -3,6 +3,7 @@ const Joi = require("joi");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton } = require("./buttons");
 const { storeNotification } = require("../cloud_function/index");
+const { v4: uuidv4 } = require('uuid');
 
 const registrationSteps = {}; // track user registration steps
 

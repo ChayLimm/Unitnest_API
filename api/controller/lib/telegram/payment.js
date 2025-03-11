@@ -1,10 +1,9 @@
 require('dotenv').config();
-import { v4 as uuidv4} from 'uuid';
 const { axiosInstance } = require("../axios");
 const { sendMessage } = require("./messages");
 const axios = require("axios"); 
 const { storeNotification } = require("../cloud_function/index");
-
+const { v4: uuidv4 } = require('uuid');
 
 
 const Token = process.env.BOT_TOKEN;
