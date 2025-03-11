@@ -3,6 +3,11 @@ const { handleRequestBakong ,handleKHQRstatus} = require("./lib/khqr/khqr");
 const { sendMessage } = require("./lib/telegram/messages");
 
 async function handler(req,res,method){
+
+    // set CORS header
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
     const {body} = req;
     if (body) {
