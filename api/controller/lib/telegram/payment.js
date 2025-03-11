@@ -176,40 +176,21 @@ function savePayRequestData(msgObj, ResponeData, state) {
             photo2 = state.photos[1].fileUrl;
         }
 
-        // handle error api res
-        if(ResponeData['undefined']){  // if api return error only one (single obj)
-            console.error("API Response Error: ", ResponeData.error);
-            waterMeter = null;
-            electricityMeter = null;
-            waterAccuracy = null;
-            electricityAccuracy = null;
+        for (let i in ResponeData){
+            let meter = ResponeData[i];
 
-        }else{
-            // Iterate over the photo data to extract meter info
-            for (let i in ResponeData){
-                let meter = ResponeData[i];
-
-                if (meter['message']){
-                    console.error("Error msg in reponse: ", meter.error);
-                    // handle value to null -> so format store just have two photo and null value of other info
-                    waterMeter = electricityMeter = null;
-                    waterAccuracy = electricityAccuracy = null;
-                    break;  // exit if meet that error
-                }
-
-                if (meter['Meter Type'] === 'Water') {
-                    waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
-                    waterAccuracy = parseFloat(meter['Accuracy']);  
-                }else if (meter['Meter Type'] === 'Electricity') {
-                    electricityMeter = parseFloat(meter['Meter Number']); 
-                    electricityAccuracy = parseFloat(meter['Accuracy']);  
-                }
+            if (meter['Meter Type'] === 'Water') {
+                waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
+                waterAccuracy = parseFloat(meter['Accuracy']);  
+            }else if (meter['Meter Type'] === 'Electricity') {
+                electricityMeter = parseFloat(meter['Meter Number']); 
+                electricityAccuracy = parseFloat(meter['Accuracy']);  
             }
-
         }
     
         // Prepare the data paymnet request to json format
         const payReqDataToStore = {
+            id: new Date().getMilliseconds().toString(),
             systemID: systemId,
             chatID: msgObj.chat.id.toString(),
             dataType: dataType,
