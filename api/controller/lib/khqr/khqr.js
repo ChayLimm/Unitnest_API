@@ -38,10 +38,15 @@ function handleRequestBakong(body, res) {
         optionalData
     );
 
+
     const KHQR = new BakongKHQR();
 
     try {
+
+        console.log("Start generating individul");
         const individual = KHQR.generateIndividual(individualInfo);
+        console.log("End generating individul");
+
         console.log("QR: " + individual.data.qr);
         console.log("MD5: " + individual.data.md5);
 
@@ -53,17 +58,17 @@ function handleRequestBakong(body, res) {
             MD5: individual.data.md5 
         });
 
-        const QRCode = require('qrcode');
+        // const QRCode = require('qrcode');
 
-        QRCode.toFile('qrCode.png', individual.data.qr, {
-            color: {
-                dark: '#000000',
-                light: '#ffffff'
-            }
-        }, function (err) {
-            if (err) throw err;
-            console.log('QR Code has been generated and saved as qrCode.png!');
-        });
+        // QRCode.toFile('qrCode.png', individual.data.qr, {
+        //     color: {
+        //         dark: '#000000',
+        //         light: '#ffffff'
+        //     }
+        // }, function (err) {
+        //     if (err) throw err;
+        //     console.log('QR Code has been generated and saved as qrCode.png!');
+        // });
 
     } catch (error) {
         console.error("Error generating QR:", error);
