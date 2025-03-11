@@ -26,7 +26,7 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
                 chat_id: messageObj.chat.id,
                 text: messageText,
             });
-            // console.log("Message sent:", response.data);
+            console.log("Message sent:", response.data);
         }
     } catch (error) {
         console.error("Error sending message:", error.message);
