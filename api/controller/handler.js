@@ -25,7 +25,7 @@ async function handler(req,res,method){
         if (body.flutter_call) {
             const msgObj = {
                 chat: {
-                    id: body.receipt.chat_id
+                    id: body.flutter_call.chat_id
                 }
             };
             sendMessage(msgObj, body.flutter_call.text, null, null);
