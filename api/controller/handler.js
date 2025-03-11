@@ -21,6 +21,16 @@ async function handler(req,res,method){
             sendMessage(msgObj, body.receipt.caption, null, body.receipt.photo);
         }
 
+        // for handle sendMessage via bot
+        if (body.flutter_call) {
+            const msgObj = {
+                chat: {
+                    id: body.receipt.chat_id
+                }
+            };
+            sendMessage(msgObj, body.flutter_call.text, null, null);
+        }
+
         if (body.callback_query) {
             const callbackQuery = body.callback_query;
             await handleCallbackQuery(callbackQuery);
