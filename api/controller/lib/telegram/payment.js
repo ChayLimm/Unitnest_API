@@ -3,7 +3,7 @@ const { axiosInstance } = require("../axios");
 const { sendMessage } = require("./messages");
 const axios = require("axios"); 
 const { storeNotification } = require("../cloud_function/index");
-const { v4: uuidv4 } = require('uuid');
+// const { v4: uuidv4 } = require('uuid');
 
 
 const Token = process.env.BOT_TOKEN;
@@ -191,7 +191,7 @@ function savePayRequestData(msgObj, ResponeData, state) {
     
         // Prepare the data paymnet request to json format
         const payReqDataToStore = {
-            id: uuidv4(),
+            // id: uuidv4(),
             systemID: systemId,
             chatID: msgObj.chat.id.toString(),
             dataType: dataType,

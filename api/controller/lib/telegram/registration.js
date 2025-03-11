@@ -3,7 +3,7 @@ const Joi = require("joi");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton } = require("./buttons");
 const { storeNotification } = require("../cloud_function/index");
-const { v4: uuidv4 } = require('uuid');
+// const { v4: uuidv4 } = require('uuid');
 
 const registrationSteps = {}; // track user registration steps
 
@@ -106,7 +106,7 @@ async function handleRegistration(messageObj) {
 
             // Prepare the data registration into JSON forma after all steps are complete
             const tenantDataToStore = {
-                id: uuidv4(),
+                // id: uuidv4(),
                 systemID: systemId,
                 chatID: chatId.toString(),
                 dataType: dataType,
