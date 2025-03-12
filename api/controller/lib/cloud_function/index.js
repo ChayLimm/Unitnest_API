@@ -23,14 +23,6 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-
-// // // debuging the specific json file path
-// // console.log('Resolved path:', serviceAccount);
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
-
 const db = admin.firestore();
 
 /**

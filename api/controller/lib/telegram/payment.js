@@ -13,7 +13,7 @@ const paymentRequestSteps = {}; // track users expecting payment images
 async function handlePhotoRequest(msgObj) {
     const chatId = msgObj.chat.id;
     const photo = msgObj.photo;
-    const msgDoc = msgObj.document;
+    const document = msgObj.document;
     const msgText = msgObj.text;
 
     if (!paymentRequestSteps[chatId]) {
@@ -29,15 +29,14 @@ async function handlePhotoRequest(msgObj) {
 
     if (state.step == 1) {
 
-        // Ensure that photo is an array and is not empty
-        if (!photo || !Array.isArray(photo) || photo.length === 0) {
+        // Ensure that photo/doc is an array and is not empty 
+        if (photo.length === 0 && !photo && !document) {
             if (msgText) {
-                return sendMessage(msgObj, "Please send only required photos: Water Meter and Electricity Meter.")     
+                return sendMessage(msgObj, "Please send the required photos: Water Meter and Electricity Meter.")     
             }
-            return sendMessage(msgObj, "No photo received!!");
         }
 
-        const fileId = photo[photo.length - 1].file_id;   // Get fileId of last photo in array (high size
+        const fileId = photo.length > 0 ? photo[photo.length - 1].file_id : document.file_id;   // Get fileId of last photo in array -> photo / doc (file image)
 
         try {
             const photoDetails = await axiosInstance.get(
@@ -113,46 +112,38 @@ async function handlePhotoRequest(msgObj) {
     } 
 }
 
-    // // Ensure that photo is an array and is not empty
-    // if (!photo || !Array.isArray(photo) || photo.length === 0) {
-    //     return sendMessage(msgObj, "No photo received or invalid format.");
-    // }
-    // if (msgText) {
-    //     return sendMessage(msgObj, "Please send the required photos: Water Meter and Electricity Meter.");
-    // }
 
+async function sendPhotosToAPI(photo1Url, photo2Url) {
+    try {    
+        // console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
 
-    async function sendPhotosToAPI(photo1Url, photo2Url) {
-        try {    
-            // console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
-
-            // Use Axios directly, request POST 
-            const response = await axios.post(
-                'https://91c3-103-16-62-134.ngrok-free.app/process', 
-                { 
-                    image_urls: [photo1Url, photo2Url] 
-                },
-                { 
-                    headers: { 'Content-Type': 'application/json' } 
-                }
-            );
-
-            console.log("API Response:", response.data); // Debugging
-    
-            if (response.status === 200) {
-                return response.data; // Return the JSON data from Flask API
-            } else {
-                console.error("Error: API request failed with status code", response.status);
-                return null;
+        // Use Axios directly, request POST 
+        const response = await axios.post(
+            'https://91c3-103-16-62-134.ngrok-free.app/process', 
+            { 
+                image_urls: [photo1Url, photo2Url] 
+            },
+            { 
+                headers: { 'Content-Type': 'application/json' } 
             }
-        } catch (error) {
-            console.error("Error sending photos to API:", error.message);
-            if (error.response) {
-                console.error("API Response Error:", error.response.data); // Debugging
-            }
+        );
+
+        console.log("API Response:", response.data); // Debugging
+
+        if (response.status === 200) {
+            return response.data; // Return the JSON data from Flask API
+        } else {
+            console.error("Error: API request failed with status code", response.status);
             return null;
         }
+    } catch (error) {
+        console.error("Error sending photos to API:", error.message);
+        if (error.response) {
+            console.error("API Response Error:", error.response.data); // Debugging
+        }
+        return null;
     }
+}
 
 
 
@@ -215,7 +206,6 @@ function savePayRequestData(msgObj, ResponeData, state) {
         // store to firebase in collection notification
         storeNotification(systemId, payReqDataToStore);
         
-
       } else {
         console.error("No data received from the Flask API");
       }

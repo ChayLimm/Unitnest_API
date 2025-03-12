@@ -81,7 +81,6 @@ async function handleCommands(messageObj, command) {
         case "start":
             clearSteps(messageObj.chat.id);
 
-
             const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
             const isRegistered = await checkTenantsRegistered(systemId, messageObj.chat.id);
             if (isRegistered) {
