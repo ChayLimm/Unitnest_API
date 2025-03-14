@@ -149,7 +149,7 @@ async function fetchContact(systemID) {
 }
 
 
-module.exports = { storeNotification, checkTenantsRegistered }
+module.exports = { storeNotification, checkTenantsRegistered, fetchRule, fetchContact }
 
 
 
