@@ -98,6 +98,56 @@ async function checkTenantsRegistered(systemId, chatId) {
   }
 }
 
+// function to fetch rule data from firestore by specific systemId
+async function fetchRule(systemID) {
+  try {
+    // Reference the specific system document
+    const systemRef = db.collection('system').doc(systemID);
+    // const systemDoc = await systemRef.get(); // get all doc
+
+    const systemDoc = await systemRef.get({ fieldMask: ['landlord.settings.rule'] });
+    console.log(systemDoc.data());  // Retrieves ONLY landlord.settings.rule
+
+    if (!systemDoc.exists) {
+      return "System ID not found.";
+    }
+
+    // Extract the landlord settings
+    const data = systemDoc.data();
+    const rule = data.landlord?.settings?.rule || "No rule found.";
+
+    return `-> Here The Rule: \n\n${rule}`;
+  } catch (error) {
+    console.error("Error fetching rule:", error);
+    return "Error fetching data.";
+  }
+}
+
+// function to fetch contact from system in firestore
+async function fetchContact(systemID) {
+  try {
+    // Reference the specific system document
+    const systemRef = db.collection('system').doc(systemID);
+
+    const systemDoc = await systemRef.get({ fieldMask: ['landlord.phoneNumber'] });
+    console.log(systemDoc.data());  // Retrieves ONLY landlord.phoneNumber
+
+    if (!systemDoc.exists) {
+      return "System ID not found.";
+    }
+
+    // Extract the landlord contact
+    const data = systemDoc.data();
+    const contact = data.landlord?.phoneNumber || "No contact found.";
+
+    return `Please contact landlord through this contact: \n\n${contact}`;
+  } catch (error) {
+    console.error("Error fetching contact:", error);
+    return "Error fetching data.";
+  }
+  
+}
+
 
 module.exports = { storeNotification, checkTenantsRegistered }
 
