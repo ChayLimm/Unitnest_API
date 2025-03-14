@@ -18,6 +18,8 @@ const serviceAccount = {
   universe_domain: process.env.SERVICE_ACCOUNT_UNIVERSE_DOMAIN
 };
 
+// console.log(serviceAccount); debug
+
 // Initialize Firebase
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
