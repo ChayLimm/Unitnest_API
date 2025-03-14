@@ -122,6 +122,9 @@ async function handleRegistration(messageObj) {
 
             console.log("Received Registration data:", JSON.stringify(tenantDataToStore, null, 2));
 
+            //show info registered to tenant
+            const showInfo = "";
+
             // Save tenant data to file, just testing in local
             // saveTenantsRegistration(tenantDataToStore);
 
