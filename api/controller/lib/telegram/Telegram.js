@@ -3,7 +3,7 @@ const { handleRegistration, registrationSteps } = require("./registration");
 const { handlePhotoRequest, paymentRequestSteps  } = require("./payment");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton, registerButton, contactButton } = require("./buttons");
-const { checkTenantsRegistered, fetchRule, fetchContact } = require("../cloud_function/index");
+const { fetchRule, fetchContact } = require("../cloud_function/index");
 
 const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
 
@@ -48,8 +48,7 @@ async function handleMessage(messageObj) {
     const messagePhoto = messageObj.photo;
     const messageDoc = messageObj.document; // handle photo in case send as file (doc)
 
-    const isRegistered = await checkTenantsRegistered(systemId, chatId);    // check if tenant has registered
-
+    // const isRegistered = await checkTenantsRegistered(systemId, chatId);    // check if tenant has registered
 
     console.log(messageObj);
 
@@ -64,10 +63,10 @@ async function handleMessage(messageObj) {
             return sendMessage(messageObj, "⚠️ Sorry, I don't understand this action.\n\n👉 Type /start to begin.");
         }
 
-        // Ensure user is registered before allowing other interactions
-        if (!isRegistered) {
-            return sendMessage(messageObj, "⚠️ You need to register first.\n\n👉 Type /start to begin.", [registerButton]);
-        }
+        // // Ensure user is registered before allowing other interactions
+        // if (!isRegistered) {
+        //     return sendMessage(messageObj, "⚠️ You need to register first.\n\n👉 Type /start to begin.", [registerButton]);
+        // }
 
 
         // Handle Registration Steps
@@ -84,7 +83,7 @@ async function handleMessage(messageObj) {
         if (!paymentRequestSteps[chatId] && (messagePhoto || messageDoc)) {
             return sendMessage(
                 messageObj,
-                "⚠️ Please click the 'Pay Now' button before sending payment photos.\n\nType /start.",
+                "⚠️ Please click the 'Pay Now' button before sending payment photos.\n\n👉 Type /start.",
             );
         }
 
