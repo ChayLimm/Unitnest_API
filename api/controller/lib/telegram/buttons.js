@@ -15,7 +15,10 @@ const contactButton = {
     text: "🔵 Contact Us", 
     callback_data: "contact" 
 };
-
+const helpButton = {
+    text: " Help",
+    callback_data: "help"
+}
 const yesButton = {
     text: "Yes", 
     callback_data: "yes" 
@@ -31,6 +34,7 @@ module.exports = {
     ruleButton, 
     registerButton, 
     contactButton,
+    helpButton,
     yesButton, 
     noButton 
 };

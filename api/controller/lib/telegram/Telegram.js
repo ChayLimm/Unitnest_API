@@ -3,8 +3,9 @@ const { handleRegistration, registrationSteps } = require("./registration");
 const { handlePhotoRequest, paymentRequestSteps  } = require("./payment");
 const { sendMessage } = require("./messages");
 const { payButton, ruleButton, registerButton, contactButton } = require("./buttons");
-const { checkTenantsRegistered } = require("../cloud_function/index");
+const { checkTenantsRegistered, fetchRule, fetchContact } = require("../cloud_function/index");
 
+const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
 
 function clearSteps(chatId) {
     if (registrationSteps[chatId]) {
@@ -24,14 +25,19 @@ async function handleCallbackQuery(callback_query) {
             return handlePhotoRequest(msgObj);
         
         case "rule":
-            const ruleMessage = `កំណត់សម្គាល់.\n\n1. រាល់ការបង់ប្រាក់យឺតលើសពី 5 ថ្ងៃនៃថ្ងៃកំណត់ (ថ្ងៃទី 1 ដើមខែ) នឹងត្រូវពិន័យមួយថ្ងៃ 3 ដុល្លារ។\n2. ត្រូវបង់ប្រាក់បន្ទប់,ទឹក,ភ្លើងរាល់ថ្ងៃដើមខែដោយភ្ជាប់មកជាមួយបង្កាន់ដៃមួយសន្លឹក។\n3. ត្រូវធ្វើការផ្លាស់ប្ដូរសម្ភារៈក្នុងបន្ទប់ដែលខូចក្នុងអំឡុងពេលស្នាក់នៅដោយខ្លួនឯង។\n4. ត្រូវជូនដំណឹងដល់ម្ចាស់បន្ទប់យ៉ាងតិចណាស់ 15 ថ្ងៃមុននឹងបញ្ឈប់ការជួលនិងសម្អាតបន្ទប់ឲ្យបានស្អាតមុននឹងចាកចេញបើមិនដូច្នេះទេម្ចាស់បន្ទប់មានសិទ្ធិកាត់ប្រាក់កក់ចំនួន 20 ដុល្លាររបស់លោកអ្នក។\n5. ត្រូវគោរពបទបញ្ជាផ្ទៃក្នុងរបស់បន្ទប់ជួល។`;
+            // const ruleMessage = `កំណត់សម្គាល់.\n\n1. រាល់ការបង់ប្រាក់យឺតលើសពី 5 ថ្ងៃនៃថ្ងៃកំណត់ (ថ្ងៃទី 1 ដើមខែ) នឹងត្រូវពិន័យមួយថ្ងៃ 3 ដុល្លារ។\n2. ត្រូវបង់ប្រាក់បន្ទប់,ទឹក,ភ្លើងរាល់ថ្ងៃដើមខែដោយភ្ជាប់មកជាមួយបង្កាន់ដៃមួយសន្លឹក។\n3. ត្រូវធ្វើការផ្លាស់ប្ដូរសម្ភារៈក្នុងបន្ទប់ដែលខូចក្នុងអំឡុងពេលស្នាក់នៅដោយខ្លួនឯង។\n4. ត្រូវជូនដំណឹងដល់ម្ចាស់បន្ទប់យ៉ាងតិចណាស់ 15 ថ្ងៃមុននឹងបញ្ឈប់ការជួលនិងសម្អាតបន្ទប់ឲ្យបានស្អាតមុននឹងចាកចេញបើមិនដូច្នេះទេម្ចាស់បន្ទប់មានសិទ្ធិកាត់ប្រាក់កក់ចំនួន 20 ដុល្លាររបស់លោកអ្នក។\n5. ត្រូវគោរពបទបញ្ជាផ្ទៃក្នុងរបស់បន្ទប់ជួល។`;
+            const ruleMessage = await fetchRule(systemId);
             return sendMessage(msgObj, ruleMessage, [payButton, [ruleButton, contactButton]]);
 
         case "register":
             return handleRegistration(msgObj);
 
+        case "contact":
+            const contactMessage = await fetchContact(systemId);
+            return sendMessage(msgObj, contactMessage, [payButton, [ruleButton, contactButton]]);
+
         default:
-            return sendMessage(msgObj, "I don't understand this action.");
+            return sendMessage(msgObj, "⚠️ I don't understand this action.");
     }
 }
 
@@ -40,6 +46,10 @@ async function handleMessage(messageObj) {
     const chatId = messageObj.chat.id;
     const messageText = messageObj.text || " ";
     const messagePhoto = messageObj.photo;
+    const messageDoc = messageObj.document; // handle photo in case send as file (doc)
+
+    const isRegistered = await checkTenantsRegistered(systemId, chatId);    // check if tenant has registered
+
 
     console.log(messageObj);
 
@@ -50,9 +60,15 @@ async function handleMessage(messageObj) {
             clearSteps(chatId); // clear on going step, start again!
             return handleCommands(messageObj, command);
 
-        }else if (!registrationSteps[chatId] && !paymentRequestSteps[chatId] && !messagePhoto){
-            return sendMessage(messageObj, "Sorry, I don't understand this action.\n\nType /start");
-        }        
+        }else if (!registrationSteps[chatId] && !paymentRequestSteps[chatId] && !messagePhoto && !messageDoc){
+            return sendMessage(messageObj, "⚠️ Sorry, I don't understand this action.\n\n👉 Type /start to begin.");
+        }
+
+        // Ensure user is registered before allowing other interactions
+        if (!isRegistered) {
+            return sendMessage(messageObj, "⚠️ You need to register first.\n\n👉 Type /start to begin.", [registerButton]);
+        }
+
 
         // Handle Registration Steps
         if (registrationSteps[chatId]) {
@@ -64,9 +80,12 @@ async function handleMessage(messageObj) {
             return handlePhotoRequest(messageObj);
         }
         
-        // handle error when tenant send photo without click btn (inline keyboard) 'pay now' 
-        if (!paymentRequestSteps[chatId] && messagePhoto) {
-            return sendMessage(messageObj, "Please click the 'Pay Now' button before sending the photos to request payment!\n\nType /start ");
+        // Handle cases where a tenant sends a photo without clicking "Pay Now"
+        if (!paymentRequestSteps[chatId] && (messagePhoto || messageDoc)) {
+            return sendMessage(
+                messageObj,
+                "⚠️ Please click the 'Pay Now' button before sending payment photos.\n\nType /start.",
+            );
         }
 
         
@@ -81,8 +100,6 @@ async function handleCommands(messageObj, command) {
         case "start":
             clearSteps(messageObj.chat.id);
 
-            const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
-            const isRegistered = await checkTenantsRegistered(systemId, messageObj.chat.id);
             if (isRegistered) {
                 return sendMessage(
                     messageObj,
