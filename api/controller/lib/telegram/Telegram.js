@@ -284,7 +284,7 @@ async function handleCommands(messageObj, command) {
                 return sendMessage(
                     messageObj,
                     `👋  Hello @${messageObj.from.username}, \n\n\tI am UnitNest Bot. Please register to continue!\n`,
-                    [registerButton]
+                    [registerButton, [ruleButton, contactButton]],
                 );
             }
         default:
