@@ -82,60 +82,53 @@ async function handleRegistration(messageObj) {
       step: 1,
       chat_id: messageObj.chat.id,
     };
-    return sendMessage(messageObj, "Enter your full name:\nExample: John Doe");
+    return sendMessage(messageObj, "📝 Enter your full name:\n\tExample: So Vannda");
   }
 
   switch (step) {
     case 1:
       // Validate name
-      const { error: nameErr, value: validName } = Joi.object({
-        name: registrationSchema.extract("name"),
-      }).validate({ name: msgText });
+      const { error: nameErr, value: validName } = Joi.object({ name: registrationSchema.extract("name") }).validate({ name: msgText });
 
       if (nameErr)
         return sendMessage(
           messageObj,
-          "Invalid Name, pls re-enter:\nExample: Jonh Doe"
+          "❌ Invalid Name, pls re-enter:\n\tExample: So Vannda"
         );
 
       registrationSteps[chatId].name = validName.name; // Store cleaned-up name
       registrationSteps[chatId].step = 2;
       return sendMessage(
         messageObj,
-        "Enter your phone number:\nExample: 012345678 or +85512345678"
+        "📱 Enter your phone number:\n\tExample: 012345678 or +85512345678"
       );
 
     case 2:
       // Validate phone number
-      const { error: phoneErr, value: validPhone } = Joi.object({
-        phone: registrationSchema.extract("phone"),
-      }).validate({ phone: msgText });
+      const { error: phoneErr, value: validPhone } = Joi.object({ phone: registrationSchema.extract("phone") }).validate({ phone: msgText });
       if (phoneErr)
         return sendMessage(
           messageObj,
-          "Invalid Phone number, pls re-enter:\nExample: 012345678 or +85512345678"
+          "❌ Invalid Phone number, pls re-enter:\n\tExample: 012345678 or +85512345678"
         );
 
       registrationSteps[chatId].phone = validPhone.phone;
       registrationSteps[chatId].step = 3;
       return sendMessage(
         messageObj,
-        "Enter your ID Identification number:\nExample: 1234567890"
+        "🪪 Enter your ID Identification number:\n\tExample: 1234567890"
       );
 
     case 3:
       // Validate ID card number
-      const { error: idIdentifyErr, value: validIdentify } = Joi.object({
-        idIdentification: registrationSchema.extract("idIdentification"),
-      }).validate({ idIdentification: msgText });
+      const { error: idIdentifyErr, value: validIdentify } = Joi.object({ idIdentification: registrationSchema.extract("idIdentification") }).validate({ idIdentification: msgText });
       if (idIdentifyErr)
         return sendMessage(
           messageObj,
-          "Invalid ID Identify number, pls re-enter:\nExample: 1234567890"
+          "❌ Invalid ID Identify number, pls re-enter:\n\tExample: 1234567890"
         );
 
-      registrationSteps[chatId].id_Identification =
-        validIdentify.idIdentification;
+      registrationSteps[chatId].id_Identification = validIdentify.idIdentification;
       registrationSteps[chatId].registration_date = new Date().toISOString();
 
       // Prepare the data registration into JSON forma after all steps are complete
@@ -156,8 +149,8 @@ async function handleRegistration(messageObj) {
       };
 
       // Prepare tenant information message
-      const showInfo = `📌 Here are your registration details:\n\n• Name: ${registrationSteps[chatId].name}\n• Phone: ${registrationSteps[chatId].phone}\n• ID: ${registrationSteps[chatId].id_Identification}\n• Registered On: ${registrationSteps[chatId].registration_date}\n⏳ Please wait for the landlord to approve your registration.\n\n You will be notified once your registration is approved. Thank you! 😊`;
-
+      const showInfo = `📌 Here are your registration details:\n────────────────\n• Name: ${registrationSteps[chatId].name}\n• Phone: ${registrationSteps[chatId].phone}\n• ID: ${registrationSteps[chatId].id_Identification}\n• Registered On: ${new Date().toDateString()}\n────────────────\n⏳ Please wait for landlord to approve your registration.\n\n You will be notified once your registration is approved. Thank you! 😊`;
+      
       console.log(
         "Received Registration data:",
         JSON.stringify(tenantDataToStore, null, 2)

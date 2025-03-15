@@ -32,11 +32,11 @@ async function handlePhotoRequest(msgObj) {
         // Check if there's a photo or document or text message
         if (msgText) {
             // If it's a text message, inform the user and continue
-            return sendMessage(msgObj, "Please send the required photos: Water Meter and Electricity Meter.");
+            return sendMessage(msgObj, "⚠️ Please send the required photos: Water Meter and Electricity Meter.");
         }
 
         if (photo.length === 0 && !document) {
-            return sendMessage(msgObj, "Please send the required photos: Water Meter and Electricity Meter.");
+            return sendMessage(msgObj, "⚠️ Please send the required photos: Water Meter and Electricity Meter.");
         }
 
         const fileId = photo.length > 0 ? photo[photo.length - 1].file_id : document?.file_id;  // Get fileId of last photo in array -> photo / doc (file image)
