@@ -101,17 +101,19 @@ async function handleCommands(messageObj, command) {
 
             const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
             const isRegistered = await checkTenantsRegistered(systemId, messageObj.chat.id);    // check if tenant has registered
+
             if (isRegistered) {
-                console.log("")
+                console.log("Check register is true!"); // debug process
                 return sendMessage(
                     messageObj,
-                    `👋  Hello ${messageObj.from.username}, \n\n\tI am UnitNest Bot. How can I help you today?\n`,
+                    `👋  Hello @${messageObj.from.username}, \n\n\tI am UnitNest Bot. How can I help you today?\n`,
                     [payButton, [ruleButton, contactButton]],
                 );
             } else {
+                console.log("Check register is false!");    // debug process 
                 return sendMessage(
                     messageObj,
-                    `👋  Hello ${messageObj.from.username}, \n\n\tI am UnitNest Bot. Please register to continue!\n`,
+                    `👋  Hello @${messageObj.from.username}, \n\n\tI am UnitNest Bot. Please register to continue!\n`,
                     [registerButton]
                 );
             }
