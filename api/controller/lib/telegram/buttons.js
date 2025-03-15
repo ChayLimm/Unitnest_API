@@ -1,20 +1,38 @@
 
+// const payButton = [{
+//     text: "Pay Now", 
+//     callback_data: "pay" 
+// }];
+// const ruleButton = { 
+//     text: "📜 Rules", 
+//     callback_data: "rule"
+// };
+// const registerButton = { 
+//     text: "Register", 
+//     callback_data: "register" 
+// };
+// const contactButton = { 
+//     text: "🔵 Contact Us", 
+//     callback_data: "contact" 
+// };
+
+
 const payButton = [{
     text: "Pay Now", 
     callback_data: "pay" 
 }];
-const ruleButton = { 
+const ruleButton = [{ 
     text: "📜 Rules", 
     callback_data: "rule"
-};
-const registerButton = { 
+}];
+const registerButton = [{ 
     text: "Register", 
     callback_data: "register" 
-};
-const contactButton = { 
+}];
+const contactButton = [{ 
     text: "🔵 Contact Us", 
     callback_data: "contact" 
-};
+}];
 
 const yesButton = {
     text: "Yes", 
