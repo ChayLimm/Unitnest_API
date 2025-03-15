@@ -101,10 +101,10 @@ async function checkTenantsRegistered(systemId, chatId) {
 }
 
 // function to fetch rule data from firestore by specific systemId
-async function fetchRule(systemID) {
+async function fetchRule(systemId) {
   try {
     // Reference the specific system document
-    const systemRef = db.collection('system').doc(systemID);
+    const systemRef = db.collection('system').doc(systemId);
     // const systemDoc = await systemRef.get(); // get all doc
 
     const systemDoc = await systemRef.get({ fieldMask: ['landlord.settings.rule'] });
@@ -126,10 +126,10 @@ async function fetchRule(systemID) {
 }
 
 // function to fetch contact from system in firestore
-async function fetchContact(systemID) {
+async function fetchContact(systemId) {
   try {
     // Reference the specific system document
-    const systemRef = db.collection('system').doc(systemID);
+    const systemRef = db.collection('system').doc(systemId);
 
     const systemDoc = await systemRef.get({ fieldMask: ['landlord.phoneNumber'] });
     console.log(systemDoc.data());  // Retrieves ONLY landlord.phoneNumber
