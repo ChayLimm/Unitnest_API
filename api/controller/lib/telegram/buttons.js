@@ -21,18 +21,19 @@ const payButton = [{
     text: "Pay Now", 
     callback_data: "pay" 
 }];
-const ruleButton = [{ 
-    text: "📜 Rules", 
-    callback_data: "rule"
-}];
 const registerButton = [{ 
     text: "Register", 
     callback_data: "register" 
 }];
-const contactButton = [{ 
+
+const ruleButton = { 
+    text: "📜 Rules", 
+    callback_data: "rule"
+};
+const contactButton = { 
     text: "🔵 Contact Us", 
     callback_data: "contact" 
-}];
+};
 
 const yesButton = {
     text: "Yes", 
