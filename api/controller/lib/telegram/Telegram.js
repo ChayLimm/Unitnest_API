@@ -5,7 +5,6 @@ const { sendMessage } = require("./messages");
 const { payButton, ruleButton, registerButton, contactButton } = require("./buttons");
 const { checkTenantsRegistered, fetchRule, fetchContact } = require("../cloud_function/index");
 
-const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
 
 function clearSteps(chatId) {
     if (registrationSteps[chatId]) {
@@ -48,8 +47,8 @@ async function handleMessage(messageObj) {
     const messagePhoto = messageObj.photo;
     const messageDoc = messageObj.document; // handle photo in case send as file (doc)
 
+    const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
     const isRegistered = await checkTenantsRegistered(systemId, chatId);    // check if tenant has registered
-
 
     console.log(messageObj);
 
@@ -100,6 +99,7 @@ async function handleCommands(messageObj, command) {
         case "start":
             clearSteps(messageObj.chat.id);
 
+            const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
             const isRegistered = await checkTenantsRegistered(systemId, messageObj.chat.id);    // check if tenant has registered
             if (isRegistered) {
                 return sendMessage(
