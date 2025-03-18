@@ -16,7 +16,7 @@ async function handler(req,res,method){
         if (body.receipt) {
             const msgObj = {
                 chat: {
-                    id: parseInt(body.receipt.chat_id, 10)  // Convert chat_id to integer
+                    id: parseInt(body.receipt.chat_id)  // Convert chat_id to integer
                 }
             };
             sendMessage(msgObj, body.receipt.caption, null, body.receipt.photo);
