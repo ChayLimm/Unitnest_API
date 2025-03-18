@@ -14,7 +14,7 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
             // console.log("Message sent:", response.data);
         } else if (photo != null) {
             try {
-                console.log("Sending message with photo");
+                console.log("Sending message with photo, photo URL:", photo);
                 const response = await axiosInstance.post("sendPhoto", {
                     chat_id: messageObj.chat.id,
                     photo: photo, 
