@@ -1,7 +1,6 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index.js" },
-    { "source": "/telegram", "destination": "/api/controller/lib/telegram/Telegram.js" }
+    { "source": "/(.*)", "destination": "/api/index.js" }
   ],
   "functions": {
     "api/index.js": {

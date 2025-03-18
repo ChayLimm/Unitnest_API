@@ -19,7 +19,7 @@ async function handler(req,res,method){
                     id: parseInt(body.receipt.chat_id)  // Convert chat_id to integer
                 }
             };
-            console.log(`Debug print chat_id: ${msgObj}`);  // debuging
+            console.log("Preparing to send photo to chat_id:", msgObj.chat.id); // debug check before sendMessage
             sendMessage(msgObj, body.receipt.caption, null, body.receipt.photo);
         }
 
