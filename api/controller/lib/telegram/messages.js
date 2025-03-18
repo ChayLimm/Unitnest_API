@@ -17,8 +17,9 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
             const response = await axiosInstance.post("sendPhoto", {
                 chat_id: messageObj.chat.id,
                 photo: photo, // File ID or URL of the photo
-                caption: messageText, // FIXED: changed from `text` to `caption`
+                caption: messageText,
             });
+            // console.log("Debug Get Send Photo!");
             console.log("Photo sent:", response?.data);  // debug
         } else {
             console.log("Sending message without button");
