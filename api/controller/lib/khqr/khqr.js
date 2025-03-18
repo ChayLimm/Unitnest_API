@@ -92,7 +92,7 @@ async function handleKHQRstatus(md5,res) {
             
           });
         console.log("res successfully");
-        res.json({data: response.data});
+        res.json(response.data);
         console.log(`Respone Data: ${JSON.stringify(response.data, null ,2)}`);
 
       } catch (error) {
