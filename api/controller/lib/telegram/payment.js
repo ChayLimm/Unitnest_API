@@ -123,7 +123,7 @@ async function sendPhotosToAPI(photo1Url, photo2Url) {
 
         // Use Axios directly, request POST 
         const response = await axios.post(
-            'https://91c3-103-16-62-134.ngrok-free.app/process', 
+            'https://05ba-203-95-199-47.ngrok-free.app/process', 
             { 
                 image_urls: [photo1Url, photo2Url] 
             },
