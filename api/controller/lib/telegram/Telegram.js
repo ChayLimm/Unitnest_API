@@ -18,6 +18,7 @@ function clearSteps(chatId) {
 async function handleCallbackQuery(callback_query) {
     const msgObj = callback_query.message;
     const data = callback_query.data;
+    const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";
     
     switch (data) {
         case "pay":
@@ -66,7 +67,7 @@ async function handleMessage(messageObj) {
         // // Ensure user is registered before allowing other interactions
         // if (!isRegistered) {
         //     return sendMessage(messageObj, "⚠️ You need to register first.\n\n👉 Type /start to begin.", [registerButton]);
-        // }
+        // } 
 
 
         // Handle Registration Steps
