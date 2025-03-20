@@ -35,14 +35,14 @@ async function handler(req,res,method){
         }
 
         // for handle remainder (with btn pay now)
-        if (body.remainder) {
+        if (body.reminder) {
             const msgObj = {
                 chat: {
-                    id: body.remainder.chat_id
+                    id: body.reminder.chat_id
                 }
             };
-            console.log(`sendMessage remainder from system with button`);
-            sendMessage(msgObj, body.remainder.text, [payButton], null);
+            console.log(`sendMessage reminder from system with button`);
+            sendMessage(msgObj, body.reminder.text, [payButton], null);
         }
 
         if (body.callback_query) {
