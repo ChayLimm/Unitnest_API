@@ -2,7 +2,7 @@
 const { handleRegistration, registrationSteps } = require("./registration");
 const { handlePhotoRequest, paymentRequestSteps  } = require("./payment");
 const { sendMessage } = require("./messages");
-const { payButton, ruleButton, registerButton, contactButton } = require("./buttons");
+const { payButton, ruleButton, registerButton, contactButton, helpButton } = require("./buttons");
 const { checkTenantsRegistered, fetchRule, fetchContact } = require("../cloud_function/index");
 
 
@@ -27,14 +27,18 @@ async function handleCallbackQuery(callback_query) {
         case "rule":
             // const ruleMessage = `កំណត់សម្គាល់.\n\n1. រាល់ការបង់ប្រាក់យឺតលើសពី 5 ថ្ងៃនៃថ្ងៃកំណត់ (ថ្ងៃទី 1 ដើមខែ) នឹងត្រូវពិន័យមួយថ្ងៃ 3 ដុល្លារ។\n2. ត្រូវបង់ប្រាក់បន្ទប់,ទឹក,ភ្លើងរាល់ថ្ងៃដើមខែដោយភ្ជាប់មកជាមួយបង្កាន់ដៃមួយសន្លឹក។\n3. ត្រូវធ្វើការផ្លាស់ប្ដូរសម្ភារៈក្នុងបន្ទប់ដែលខូចក្នុងអំឡុងពេលស្នាក់នៅដោយខ្លួនឯង។\n4. ត្រូវជូនដំណឹងដល់ម្ចាស់បន្ទប់យ៉ាងតិចណាស់ 15 ថ្ងៃមុននឹងបញ្ឈប់ការជួលនិងសម្អាតបន្ទប់ឲ្យបានស្អាតមុននឹងចាកចេញបើមិនដូច្នេះទេម្ចាស់បន្ទប់មានសិទ្ធិកាត់ប្រាក់កក់ចំនួន 20 ដុល្លាររបស់លោកអ្នក។\n5. ត្រូវគោរពបទបញ្ជាផ្ទៃក្នុងរបស់បន្ទប់ជួល។`;
             const ruleMessage = await fetchRule(systemId);
-            return sendMessage(msgObj, ruleMessage, [[ruleButton, contactButton]]);
+            return sendMessage(msgObj, ruleMessage, [[ruleButton, contactButton], [helpInfo]]);
 
         case "register":
             return handleRegistration(msgObj);
 
+        case "help":
+            const helpInfo = '';
+            return sendMessage(msgObj, helpInfo, [[ruleButton, contactButton], [helpInfo]])
+
         case "contact":
             const contactMessage = await fetchContact(systemId);
-            return sendMessage(msgObj, contactMessage, [[ruleButton, contactButton]]);
+            return sendMessage(msgObj, contactMessage, [[ruleButton, contactButton], [helpInfo]]);
 
         default:
             return sendMessage(msgObj, "⚠️ I don't understand this action.");
@@ -108,7 +112,7 @@ async function handleCommands(messageObj, command) {
                 return sendMessage(
                     messageObj,
                     `👋  Hello @${messageObj.from.username}, \n\n\tI am UnitNest Bot. How can I help you today?\n`,
-                    [[ruleButton, contactButton]],
+                    [[ruleButton, contactButton], [helpButton]],
                 );
             } else {
                 console.log("Check register is false!");    // debug process 
