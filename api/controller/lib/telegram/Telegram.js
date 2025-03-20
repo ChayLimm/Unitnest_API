@@ -108,7 +108,7 @@ async function handleCommands(messageObj, command) {
                 return sendMessage(
                     messageObj,
                     `👋  Hello @${messageObj.from.username}, \n\n\tI am UnitNest Bot. How can I help you today?\n`,
-                    [payButton, [ruleButton, contactButton]],
+                    [[ruleButton, contactButton]],
                 );
             } else {
                 console.log("Check register is false!");    // debug process 

@@ -145,7 +145,7 @@ async function fetchContact(systemId) {
     const data = systemDoc.data();
     const contact = data.landlord?.phoneNumber || "No contact found.";
 
-    return `Please contact landlord through this contact: \n\n${contact}`;
+    return `👤 Landlord Contact Information:\n\n📞 Phone: ${contact}`;
   } catch (error) {
     console.error("Error fetching contact:", error);
     return "Error fetching data.";
