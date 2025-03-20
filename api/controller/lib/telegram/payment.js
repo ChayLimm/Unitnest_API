@@ -22,7 +22,7 @@ async function handlePhotoRequest(msgObj) {
                 chat_id: msgObj.chat.id, 
                 photos: []
             };
-            return sendMessage(msgObj, `Please upload photos for request payment:\n- Water Meter\n- Electricity Meter`);
+            return sendMessage(msgObj, `📸 Please upload photos for request payment:\n\n✅ Water Meter\n✅ Electricity Meter`);
     } 
 
     const state = paymentRequestSteps[chatId];
@@ -76,8 +76,7 @@ async function handlePhotoRequest(msgObj) {
                     state.step = 2; // Completed step for payment request
 
                     // console.log("Received Both Photo:", state.photos);
-
-                    
+    
                     // Use dummy data for testing
                     // const dummyData = [
                     //     {

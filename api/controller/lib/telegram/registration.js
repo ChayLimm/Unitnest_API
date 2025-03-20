@@ -166,7 +166,6 @@ async function handleRegistration(messageObj) {
 
       return sendMessage(
         messageObj,
-        // "Please waiting for landlord to approve your registration!"
         showInfo
       );
 

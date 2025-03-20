@@ -118,7 +118,10 @@ async function fetchRule(systemId) {
     const data = systemDoc.data();
     const rule = data.landlord?.settings?.rule || "No rule found.";
 
-    return `-> Here The Rule: \n\n${rule}`;
+    // format rule 
+    const formatRule = rule.map((rule, index) => `✅ ${index + 1}. ${rule}`).join("\n");
+
+    return `📜 Here The Rule: \n\n${formatRule}`;
   } catch (error) {
     console.error("Error fetching rule:", error);
     return "Error fetching data.";

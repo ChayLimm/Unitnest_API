@@ -24,7 +24,7 @@ async function handler(req,res,method){
             sendMessage(msgObj, body.receipt.caption, null, body.receipt.photo);
         }
 
-        // for handle sendMessage via bot
+        // for handle sendMessage reject/accept from flutter via bot
         if (body.flutter_call) {
             const msgObj = {
                 chat: {
