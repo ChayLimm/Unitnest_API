@@ -20,7 +20,7 @@ const contactButton = {
 };
 
 const helpButton = {
-    text: " Help Info",
+    text: "ℹ️ Help Info",
     callback_data: "help"
 };
 

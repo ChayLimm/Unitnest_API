@@ -35,9 +35,9 @@ async function handleCallbackQuery(callback_query) {
         case "contact":
             const contactMessage = await fetchContact(systemId);
             return sendMessage(msgObj, contactMessage, [[ruleButton, contactButton], [helpInfo]]);
-            
+
         case "help":
-            const helpInfo = 'Help Info: \n\n';
+            const helpInfo = 'ℹ️ Help Info: \n\n';
             return sendMessage(msgObj, helpInfo, [[ruleButton, contactButton], [helpInfo]]);
 
         default:
