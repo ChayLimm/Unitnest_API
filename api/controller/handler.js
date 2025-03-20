@@ -1,6 +1,7 @@
 const { handleMessage, handleCallbackQuery } = require("./lib/telegram/Telegram");
 const { handleRequestBakong ,handleKHQRstatus} = require("./lib/khqr/khqr");
 const { sendMessage } = require("./lib/telegram/messages");
+const { payButton } = require("./lib/telegram/buttons");
 
 async function handler(req,res,method){
 
@@ -31,6 +32,17 @@ async function handler(req,res,method){
                 }
             };
             sendMessage(msgObj, body.flutter_call.text, null, null);
+        }
+
+        // for handle remainder (with btn pay now)
+        if (body.remainder) {
+            const msgObj = {
+                chat: {
+                    id: body.remainder.chat_id
+                }
+            };
+            console.log(`sendMessage remainder from system with button`);
+            sendMessage(msgObj, body.remainder.text, [payButton], null);
         }
 
         if (body.callback_query) {
