@@ -135,7 +135,7 @@ function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
         axios.post(
             'https://e5a3-167-179-44-196.ngrok-free.app/process',
             {   
-                chat_id: chatId,
+                chat_id: chatId.toString(),
                 image_urls: [photo1Url, photo2Url] 
             },
             { 
