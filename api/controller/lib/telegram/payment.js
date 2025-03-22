@@ -123,23 +123,23 @@ async function handlePhotoRequest(msgObj) {
     } 
 }
 
-// ✅ Process API call in background (without blocking response)
-async function processPaymentRequest(chatId, msgObj, state) {
-    // console.log(`send payment request to Flask API`);
-    try {
-        const responseData = await sendPhotosToAPI(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
-        if (!responseData) {
-            return sendMessage(msgObj, "Error processing payment request.");
-        }
+// // ✅ Process API call in background (without blocking response)
+// async function processPaymentRequest(chatId, msgObj, state) {
+//     // console.log(`send payment request to Flask API`);
+//     try {
+//         const responseData = await sendPhotosToAPI(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
+//         if (!responseData) {
+//             return sendMessage(msgObj, "Error processing payment request.");
+//         }
 
-        savePayRequestData(msgObj, responseData, state);
+//         savePayRequestData(msgObj, responseData, state);
 
-        sendMessage(msgObj, "✅ Your payment request has been successfully processed.");
-    } catch (error) {
-        console.error("Payment Processing Error:", error);
-        sendMessage(msgObj, "⚠️ There was an error processing your request. Please try again.");
-    }
-}
+//         sendMessage(msgObj, "✅ Your payment request has been successfully processed.");
+//     } catch (error) {
+//         console.error("Payment Processing Error:", error);
+//         sendMessage(msgObj, "⚠️ There was an error processing your request. Please try again.");
+//     }
+// }
 
 
 // async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
@@ -164,6 +164,43 @@ async function processPaymentRequest(chatId, msgObj, state) {
 //         return null;
 //     }
 // }
+
+async function processPaymentRequest(chatId, msgObj, state) {
+    // Send immediate response
+    sendMessage(msgObj, "✅ Your payment request is being processed...");
+
+    try {
+        // Start the long polling (waiting for the Flask response)
+        const responseData = await waitForFlaskResponse(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
+
+        // If we get a response, process it
+        if (responseData) {
+            savePayRequestData(msgObj, responseData, state);
+            sendMessage(msgObj, "✅ Your payment request has been successfully processed.");
+        } else {
+            sendMessage(msgObj, "⚠️ There was an error processing your request. Please try again.");
+        }
+    } catch (error) {
+        console.error("Payment Processing Error:", error);
+        sendMessage(msgObj, "⚠️ Error processing your payment request. Please try again.");
+    }
+}
+
+// Simulate long polling
+async function waitForFlaskResponse(chatId, photoUrl1, photoUrl2) {
+    const timeout = 60000; // 1-minute timeout
+
+    // Create a promise that will wait for Flask's response or timeout
+    return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => reject(new Error("Request timed out")), timeout);
+
+        sendPhotosToAPI(chatId, photoUrl1, photoUrl2).then(responseData => {
+            clearTimeout(timeoutId); // Clear timeout if we got a response
+            resolve(responseData);
+        }).catch(reject);
+    });
+}
+
 
 
 async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {

@@ -18,11 +18,11 @@ app.use(cors());
 
 
 // Set a timeout for the entire server
-app.use(timeout('100s'));  // Set timeout to 60 seconds
+// app.use(timeout('100s'));  // Set timeout to 60 seconds
 
-app.use((req, res, next) => {
-    if (!req.timedout) next();
-});
+// app.use((req, res, next) => {
+//     if (!req.timedout) next();
+// });
 
 app.get('/test', (req, res) => {
     res.send('hello');
