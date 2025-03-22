@@ -83,7 +83,7 @@ async function handlePhotoRequest(msgObj) {
                     // await processPaymentRequest(chatId, msgObj, state);
 
                     // send to flask api without await
-                    sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
+                    sendPhotosToAPI(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
 
                     // Clean up stored request state
                     delete paymentRequestSteps[chatId];  
