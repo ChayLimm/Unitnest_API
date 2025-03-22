@@ -166,39 +166,62 @@ async function processPaymentRequest(chatId, msgObj, state) {
 // }
 
 
+// async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
+//     try {    
+//         console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
+
+//         // Use Axios directly, request POST 
+//         const response = await axios.post(
+//             'https://ac6a-117-20-112-36.ngrok-free.app/process', 
+//             {   
+//                 chat_id: chatId,
+//                 image_urls: [photo1Url, photo2Url] 
+//             },
+//             { 
+//                 headers: { 'Content-Type': 'application/json' },
+//                 timeout: 120000 
+//             }
+//         );
+
+//         console.log("API Response:", response.data); // Debugging
+
+//         if (response.status === 200) {
+//             return response.data; // Return the JSON data from Flask API
+//         } else {
+//             console.error("Error: API request failed with status code", response.status);
+//             return null;
+//         }
+//     } catch (error) {
+//         console.error("Error sending photos to API:", error.message);
+//         if (error.response) {
+//             console.error("API Response Error:", error.response.data); // Debugging
+//         }
+//         return null;
+//     }
+// }
+
 async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
-    try {    
-        console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
-
-        // Use Axios directly, request POST 
-        const response = await axios.post(
-            'https://ac6a-117-20-112-36.ngrok-free.app/process', 
-            {   
-                chat_id: chatId,
-                image_urls: [photo1Url, photo2Url] 
-            },
-            { 
-                headers: { 'Content-Type': 'application/json' },
-                timeout: 120000 
-            }
-        );
-
-        console.log("API Response:", response.data); // Debugging
-
-        if (response.status === 200) {
-            return response.data; // Return the JSON data from Flask API
-        } else {
-            console.error("Error: API request failed with status code", response.status);
-            return null;
+    try {
+        // Retry logic
+        let retries = 3;
+        let response = null;
+        while (retries > 0) {
+            response = await axios.post(
+                'https://ac6a-117-20-112-36.ngrok-free.app/process',
+                { chat_id: chatId, image_urls: [photo1Url, photo2Url] },
+                { headers: { 'Content-Type': 'application/json' }, timeout: 120000 }
+            );
+            if (response.status === 200) break;  // Exit loop if successful
+            retries--;
+            if (retries === 0) throw new Error('API Request Failed');
         }
+        return response.data;
     } catch (error) {
         console.error("Error sending photos to API:", error.message);
-        if (error.response) {
-            console.error("API Response Error:", error.response.data); // Debugging
-        }
         return null;
     }
 }
+
 
 
 
