@@ -79,8 +79,11 @@ async function handlePhotoRequest(msgObj) {
 
                     console.log("Received Both Photo:", state.photos);
 
-                    // ✅ Process in background without waiting
-                    await processPaymentRequest(chatId, msgObj, state);
+                    // // ✅ Process in background without waiting
+                    // await processPaymentRequest(chatId, msgObj, state);
+
+                    // send to flask api without await
+                    sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
 
                     // Clean up stored request state
                     delete paymentRequestSteps[chatId];  
@@ -123,23 +126,48 @@ async function handlePhotoRequest(msgObj) {
     } 
 }
 
-// ✅ Process API call in background (without blocking response)
-async function processPaymentRequest(chatId, msgObj, state) {
-    // console.log(`send payment request to Flask API`);
+// handle post request to ai flask without wait for reponse
+function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
     try {
-        const responseData = await sendPhotosToAPI(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
-        if (!responseData) {
-            return sendMessage(msgObj, "Error processing payment request.");
-        }
+        console.log("Sending payload to Flask API:", photo1Url, photo2Url);
 
-        savePayRequestData(msgObj, responseData, state);
+        // Send the POST request without waiting for the response
+        axios.post(
+            'https://ac6a-117-20-112-36.ngrok-free.app/process',
+            {   
+                chat_id: chatId,
+                image_urls: [photo1Url, photo2Url] 
+            },
+            { 
+                headers: { 'Content-Type': 'application/json' },
+            }
+        );
 
-        sendMessage(msgObj, "✅ Your payment request has been successfully processed.");
+        console.log("POST request sent to Flask API");
+        
     } catch (error) {
-        console.error("Payment Processing Error:", error);
-        sendMessage(msgObj, "⚠️ There was an error processing your request. Please try again.");
+        console.error("Error sending photos to API:", error.message);
     }
 }
+
+
+// // ✅ Process API call in background (without blocking response)
+// async function processPaymentRequest(chatId, msgObj, state) {
+//     // console.log(`send payment request to Flask API`);
+//     try {
+//         const responseData = await sendPhotosToAPI(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
+//         if (!responseData) {
+//             return sendMessage(msgObj, "Error processing payment request.");
+//         }
+
+//         savePayRequestData(msgObj, responseData, state);
+
+//         sendMessage(msgObj, "✅ Your payment request has been successfully processed.");
+//     } catch (error) {
+//         console.error("Payment Processing Error:", error);
+//         sendMessage(msgObj, "⚠️ There was an error processing your request. Please try again.");
+//     }
+// }
 
 
 // async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
@@ -166,110 +194,87 @@ async function processPaymentRequest(chatId, msgObj, state) {
 // }
 
 
-async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
-    try {    
-        console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
+// function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
+//     try {    
+//         console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
 
-        // Use Axios directly, request POST 
-        const response = await axios.post(
-            'https://ac6a-117-20-112-36.ngrok-free.app/process', 
-            {   
-                chat_id: chatId,
-                image_urls: [photo1Url, photo2Url] 
-            },
-            { 
-                headers: { 'Content-Type': 'application/json' },
-            }
-        );
+//         // Use Axios directly, request POST 
+//         const response = axios.post(
+//             'https://ac6a-117-20-112-36.ngrok-free.app/process', 
+//             {   
+//                 chat_id: chatId,
+//                 image_urls: [photo1Url, photo2Url] 
+//             },
+//             { 
+//                 headers: { 'Content-Type': 'application/json' },
+//             }
+//         );
 
-        console.log("API Response:", response.data); // Debugging
+//         console.log("API Response:", response.data); // Debugging
 
-        if (response.status === 200) {
-            return response.data; // Return the JSON data from Flask API
-        } else {
-            console.error("Error: API request failed with status code", response.status);
-            return null;
-        }
-    } catch (error) {
-        console.error("Error sending photos to API:", error.message);
-        if (error.response) {
-            console.error("API Response Error:", error.response.data); // Debugging
-        }
-        return null;
-    }
-}
-
-// async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
-//     try {
-//         // Retry logic
-//         let retries = 3;
-//         let response = null;
-//         while (retries > 0) {
-//             response = await axios.post(
-//                 'https://ac6a-117-20-112-36.ngrok-free.app/process',
-//                 { chat_id: chatId, image_urls: [photo1Url, photo2Url] },
-//                 { headers: { 'Content-Type': 'application/json' }, timeout: 120000 }
-//             );
-//             if (response.status === 200) break;  // Exit loop if successful
-//             retries--;
-//             if (retries === 0) throw new Error('API Request Failed');
+//         if (response.status === 200) {
+//             return response.data; // Return the JSON data from Flask API
+//         } else {
+//             console.error("Error: API request failed with status code", response.status);
+//             return null;
 //         }
-//         return response.data;
 //     } catch (error) {
 //         console.error("Error sending photos to API:", error.message);
+//         if (error.response) {
+//             console.error("API Response Error:", error.response.data); // Debugging
+//         }
 //         return null;
 //     }
 // }
 
 
 
-
 // add system id for notify to correct system of landlord that own the system
 // add const system Id (for notify and send data to the right system of landlord)
 
-function savePayRequestData(msgObj, ResponeData, state) {
+function savePayRequestData(responeData) {
     // debug: extract reponse and save to notification
-    console.log(`Process extract reponse format`);
-    if (ResponeData) {
-        let waterMeter ;
-        let electricityMeter ;
+    console.log(`Process extract response format`);
+    
+    if (responeData) {
+        let waterMeter;
+        let electricityMeter;
         let waterAccuracy;
-        let electricityAccuracy ;
+        let electricityAccuracy;
         let photo1; 
         let photo2;
         let systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // sample systemId for testing
         let dataType = "paymentRequest";
         let status = "pending"; 
 
-        // Ensure state and photos are available
-        if (state && state.photos.length === 2) {
-            photo1 = state.photos[0].fileUrl;
-            photo2 = state.photos[1].fileUrl;
-        }
-
-        for (let i in ResponeData){
-            let meter = ResponeData[i];
+        // Extract meter data
+        for (let i in responeData.meterData) {
+            let meter = responeData.meterData[i];
 
             if (meter['Meter Type'] === 'Water') {
                 waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
-                waterAccuracy = parseFloat(meter['Accuracy']);  
-            }else if (meter['Meter Type'] === 'Electricity') {
-                electricityMeter = parseFloat(meter['Meter Number']); 
-                electricityAccuracy = parseFloat(meter['Accuracy']);  
+                waterAccuracy = parseFloat(meter['Accuracy']);
+            } else if (meter['Meter Type'] === 'Electricity') {
+                electricityMeter = parseFloat(meter['Meter Number']);
+                electricityAccuracy = parseFloat(meter['Accuracy']);
             }
         }
-    
-        // Prepare the data paymnet request to json format
+
+        // Assign chatId and photo URLs from the response data
+        chatId = responeData.chat_id;
+        photo1 = responeData.url_1;
+        photo2 = responeData.url_2;
+
+        // Prepare the data payment request to JSON format
         const payReqDataToStore = {
-            // id: uuidv4(),
             systemID: systemId,
-            chatID: msgObj.chat.id.toString(),
+            chatID: chatId,
             dataType: dataType,
             read: false,
             status: status,
             isApprove: false,
-            notifyData:{
-                requestDateOn: new Date().toISOString(),  
+            notifyData: {
+                requestDateOn: new Date().toISOString(),
                 water: waterMeter,
                 electricity: electricityMeter,
                 waterAccuracy: waterAccuracy,
@@ -279,19 +284,83 @@ function savePayRequestData(msgObj, ResponeData, state) {
             }
         };
 
-        console.log('\nRetrive Data From Api after done payment request!!')
+        console.log('\nRetrieve Data From API after payment request is processed!!');
         console.log(JSON.stringify(payReqDataToStore, null, 2));  
 
-        // store to firebase in collection notification
+        // Store to Firebase in the collection 'notification'
         storeNotification(systemId, payReqDataToStore);
-        
-      } else {
+
+    } else {
         console.error("No data received from the Flask API");
-      }
+    }
 }
+
 
 module.exports = {
     handlePhotoRequest,
-    paymentRequestSteps
+    paymentRequestSteps,
+    savePayRequestData
 };
 
+// function savePayRequestData(msgObj, ResponeData, state) {
+//     // debug: extract reponse and save to notification
+//     console.log(`Process extract reponse format`);
+//     if (ResponeData) {
+//         let waterMeter ;
+//         let electricityMeter ;
+//         let waterAccuracy;
+//         let electricityAccuracy ;
+//         let photo1; 
+//         let photo2;
+//         let systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // sample systemId for testing
+//         let dataType = "paymentRequest";
+//         let status = "pending"; 
+
+//         // Ensure state and photos are available
+//         if (state && state.photos.length === 2) {
+//             photo1 = state.photos[0].fileUrl;
+//             photo2 = state.photos[1].fileUrl;
+//         }
+
+//         for (let i in ResponeData){
+//             let meter = ResponeData[i];
+
+//             if (meter['Meter Type'] === 'Water') {
+//                 waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
+//                 waterAccuracy = parseFloat(meter['Accuracy']);  
+//             }else if (meter['Meter Type'] === 'Electricity') {
+//                 electricityMeter = parseFloat(meter['Meter Number']); 
+//                 electricityAccuracy = parseFloat(meter['Accuracy']);  
+//             }
+//         }
+    
+//         // Prepare the data paymnet request to json format
+//         const payReqDataToStore = {
+//             // id: uuidv4(),
+//             systemID: systemId,
+//             chatID: msgObj.chat.id.toString(),
+//             dataType: dataType,
+//             read: false,
+//             status: status,
+//             isApprove: false,
+//             notifyData:{
+//                 requestDateOn: new Date().toISOString(),  
+//                 water: waterMeter,
+//                 electricity: electricityMeter,
+//                 waterAccuracy: waterAccuracy,
+//                 electricityAccuracy: electricityAccuracy,
+//                 photo1URL: photo1,
+//                 photo2URL: photo2
+//             }
+//         };
+
+//         console.log('\nRetrive Data From Api after done payment request!!')
+//         console.log(JSON.stringify(payReqDataToStore, null, 2));  
+
+//         // store to firebase in collection notification
+//         storeNotification(systemId, payReqDataToStore);
+        
+//       } else {
+//         console.error("No data received from the Flask API");
+//       }
+// }

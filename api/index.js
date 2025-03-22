@@ -4,7 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const serverless = require("serverless-http");
-const timeout = require('connect-timeout');
+const { savePayRequestData } = require("../api/controller/lib/telegram/payment");
 
 const { handler } = require("./controller/handler");
 
@@ -16,13 +16,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
-// Set a timeout for the entire server
-// app.use(timeout('100s'));  // Set timeout to 60 seconds
-
-// app.use((req, res, next) => {
-//     if (!req.timedout) next();
-// });
 
 app.get('/test', (req, res) => {
     res.send('hello');
@@ -40,7 +33,18 @@ app.post("/telegram", async (req, res) => {
 
 app.post("/aimodel", async (req, res) => {
     console.log(req.body);
-    res.send(await handler(req));
+    try {
+        const responseData = req.body; // Assuming the data from Flask is in the request body
+        console.log("Received response from Flask:", responseData);
+
+        // Now save the data to Firestore (using your existing save function)
+        savePayRequestData(responseData);
+
+        res.status(200).send("Data processed successfully");
+    } catch (error) {
+        console.error("Error in /aimodel:", error);
+        res.status(500).send("Error processing request");
+    }
 });
 
 app.post("/khqr", async (req, res) => {
