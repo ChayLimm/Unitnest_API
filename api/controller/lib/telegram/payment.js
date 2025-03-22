@@ -76,6 +76,13 @@ async function handlePhotoRequest(msgObj) {
                     state.step = 2; // Completed step for payment request
 
                     console.log("Received Both Photo:", state.photos);
+
+                    // ✅ Process in background without waiting
+                    processPaymentRequest(chatId, msgObj, state);
+
+                    // Clean up stored request state
+                    delete paymentRequestSteps[chatId];  
+                    state.photos = []; 
     
                     // Use dummy data for testing
                     // const dummyData = [
@@ -102,21 +109,6 @@ async function handlePhotoRequest(msgObj) {
                     // delete paymentRequestSteps[chatId]; // Payment request complete
                     // state.photos = [];   // Clear stored photos
 
-                      // ✅ Process the API request asynchronously
-                    setTimeout(async () => {
-                        const responseData = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
-                        
-                        if (!responseData) {
-                            return sendMessage(msgObj, "Error processing payment request.");
-                        }
-
-                        savePayRequestData(msgObj, responseData, state);  
-                        delete paymentRequestSteps[chatId]; // Cleanup stored request data
-                        state.photos = [];   // Clear stored photos
-
-                        sendMessage(msgObj, "✅ Your payment request has been successfully processed.");
-                    }, 0); // Run asynchronously after response
-
                 }
             } else {
                 return sendMessage(msgObj, "Failed to retrieve photo, please try again.");
@@ -127,6 +119,24 @@ async function handlePhotoRequest(msgObj) {
             return sendMessage(msgObj, "Error, cannot get your photo. Please try again!");
         }
     } 
+}
+
+// ✅ Process API call in background (without blocking response)
+async function processPaymentRequest(chatId, msgObj, state) {
+    console.log(`send payment request to Flask API`);
+    try {
+        const responseData = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
+        if (!responseData) {
+            return sendMessage(msgObj, "Error processing payment request.");
+        }
+
+        savePayRequestData(msgObj, responseData, state);
+
+        sendMessage(msgObj, "✅ Your payment request has been successfully processed.");
+    } catch (error) {
+        console.error("Payment Processing Error:", error);
+        sendMessage(msgObj, "⚠️ There was an error processing your request. Please try again.");
+    }
 }
 
 
