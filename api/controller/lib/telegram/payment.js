@@ -232,7 +232,7 @@ function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
 // add system id for notify to correct system of landlord that own the system
 // add const system Id (for notify and send data to the right system of landlord)
 
-function savePayRequestData(responeData) {
+async function savePayRequestData(responeData) {
     // debug: extract reponse and save to notification
     console.log(`Process extract response format`);
     
@@ -266,15 +266,15 @@ function savePayRequestData(responeData) {
         photo1 = responeData.url_1;
         photo2 = responeData.url_2;
 
-        // Check if both URLs are present in the response
-        console.log(`URL 1: ${photo1}`);
-        console.log(`URL 2: ${photo2}`);
+        // // Check if both URLs are present in the response
+        // console.log(`URL 1: ${photo1}`);
+        // console.log(`URL 2: ${photo2}`);
 
-        // Check if the URLs exist before proceeding
-        if (!photo1 || !photo2) {
-            console.error("Missing photo URLs in the response data");
-            return;
-        }
+        // // Check if the URLs exist before proceeding
+        // if (!photo1 || !photo2) {
+        //     console.error("Missing photo URLs in the response data");
+        //     return;
+        // }
 
         // Prepare the data payment request to JSON format
         const payReqDataToStore = {
@@ -299,7 +299,7 @@ function savePayRequestData(responeData) {
         console.log(JSON.stringify(payReqDataToStore, null, 2));  
 
         // Store to Firebase in the collection 'notification'
-        storeNotification(systemId, payReqDataToStore);
+        await storeNotification(systemId, payReqDataToStore);
 
     } else {
         console.error("No data received from the Flask API");

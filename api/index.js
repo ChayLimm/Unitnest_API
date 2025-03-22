@@ -36,8 +36,8 @@ app.post("/aimodel", async (req, res) => {
         const responseData = req.body; // Assuming the data from Flask is in the request body
         console.log("Received response from Flask:", responseData);
 
-        // Now save the data to Firestore (using your existing save function)
-        savePayRequestData(responseData);
+        // extract json reponse into format, store to firebase
+        await savePayRequestData(responseData);
 
         res.status(200).send("Data processed successfully");
     } catch (error) {
