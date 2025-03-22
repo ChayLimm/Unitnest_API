@@ -43,11 +43,11 @@ async function handlePhotoRequest(msgObj) {
         console.log("File ID:", fileId);
 
         try {
-            // const photoDetails = await axiosInstance.get(
-            //     "getFile", {file_id: fileId}
-            // ); // Get file/photo details from Telegram server
+            const photoDetails = await axiosInstance.get(
+                "getFile", {file_id: fileId}
+            ); // Get file/photo details from Telegram server
 
-            const photoDetails = await axiosInstance.get(`getFile?file_id=${fileId}`);
+            // const photoDetails = await axiosInstance.get(`getFile?file_id=${fileId}`);
             
             if (photoDetails && photoDetails.data && photoDetails.data.result) {
                 const photoData = photoDetails.data.result;
@@ -83,7 +83,7 @@ async function handlePhotoRequest(msgObj) {
                     // await processPaymentRequest(chatId, msgObj, state);
 
                     // send to flask api without await
-                    sendPhotosToAPI(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
+                    sendPhotosToAPI(chatId.toString(), state.photos[0].fileUrl, state.photos[1].fileUrl);
 
                     // Clean up stored request state
                     delete paymentRequestSteps[chatId];  
@@ -135,7 +135,7 @@ function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
         axios.post(
             'https://e5a3-167-179-44-196.ngrok-free.app/process',
             {   
-                chat_id: chatId.toString(),
+                chat_id: chatId,
                 image_urls: [photo1Url, photo2Url] 
             },
             { 
