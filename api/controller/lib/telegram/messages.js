@@ -11,7 +11,7 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
                 text: messageText,
                 reply_markup: JSON.stringify({ inline_keyboard: button }),
             });
-            // console.log("Message sent:", response.data);
+            console.log("Message sent:", response.data);
         } else if (photo != null) {
             try {
                 console.log("Sending message with photo, photo URL:", photo);
