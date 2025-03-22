@@ -261,7 +261,7 @@ function savePayRequestData(responeData) {
         }
 
         // Assign chatId and photo URLs from the response data
-        chatId = responeData.chat_id;
+        chatId = responeData.chat_id.toString();
         photo1 = responeData.url_1;
         photo2 = responeData.url_2;
 
