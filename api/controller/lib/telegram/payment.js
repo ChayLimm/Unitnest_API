@@ -73,7 +73,7 @@ async function handlePhotoRequest(msgObj) {
                 if (state.photos.length === 2){
                     sendMessage(
                         msgObj,
-                        "Thank you! Your payment request is processing."
+                        "Thank you! Your payment request is processing...!"
                     );
                     state.step = 2; // Completed step for payment request
 
@@ -133,7 +133,7 @@ function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
 
         // Send the POST request without waiting for the response
         axios.post(
-            'https://ac6a-117-20-112-36.ngrok-free.app/process',
+            'https://e5a3-167-179-44-196.ngrok-free.app/process',
             {   
                 chat_id: chatId,
                 image_urls: [photo1Url, photo2Url] 

@@ -5,7 +5,6 @@ const cors = require("cors");
 const axios = require("axios");
 const serverless = require("serverless-http");
 const { savePayRequestData } = require("../api/controller/lib/telegram/payment");
-
 const { handler } = require("./controller/handler");
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
