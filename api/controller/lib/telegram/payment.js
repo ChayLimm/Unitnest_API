@@ -125,7 +125,7 @@ async function handlePhotoRequest(msgObj) {
 
 // ✅ Process API call in background (without blocking response)
 async function processPaymentRequest(chatId, msgObj, state) {
-    console.log(`send payment request to Flask API`);
+    // console.log(`send payment request to Flask API`);
     try {
         const responseData = await sendPhotosToAPI(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
         if (!responseData) {
@@ -168,11 +168,11 @@ async function processPaymentRequest(chatId, msgObj, state) {
 
 async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
     try {    
-        // console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
+        console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
 
         // Use Axios directly, request POST 
         const response = await axios.post(
-            'https://8fcc-167-179-44-196.ngrok-free.app/process', 
+            'https://ac6a-117-20-112-36.ngrok-free.app/process', 
             {   
                 chat_id: chatId,
                 image_urls: [photo1Url, photo2Url] 
