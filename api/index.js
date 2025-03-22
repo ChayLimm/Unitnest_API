@@ -38,6 +38,11 @@ app.post("/telegram", async (req, res) => {
     res.send(await handler(req));
 });
 
+app.post("/aimodel", async (req, res) => {
+    console.log(req.body);
+    res.send(await handler(req));
+});
+
 app.post("/khqr", async (req, res) => {
 
     try {
