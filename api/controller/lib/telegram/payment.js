@@ -260,10 +260,21 @@ function savePayRequestData(responeData) {
             }
         }
 
+
         // Assign chatId and photo URLs from the response data
-        chatId = responeData.chat_id.toString();
+        const chatId = responeData.chat_id.toString();
         photo1 = responeData.url_1;
         photo2 = responeData.url_2;
+
+        // Check if both URLs are present in the response
+        console.log(`URL 1: ${photo1}`);
+        console.log(`URL 2: ${photo2}`);
+
+        // Check if the URLs exist before proceeding
+        if (!photo1 || !photo2) {
+            console.error("Missing photo URLs in the response data");
+            return;
+        }
 
         // Prepare the data payment request to JSON format
         const payReqDataToStore = {
