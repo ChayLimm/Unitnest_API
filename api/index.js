@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 const serverless = require("serverless-http");
+const timeout = require('connect-timeout');
 
 const { handler } = require("./controller/handler");
 
@@ -15,8 +16,13 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// set server timeout
 
+// Set a timeout for the entire server
+app.use(timeout('100s'));  // Set timeout to 60 seconds
+
+app.use((req, res, next) => {
+    if (!req.timedout) next();
+});
 
 app.get('/test', (req, res) => {
     res.send('hello');
