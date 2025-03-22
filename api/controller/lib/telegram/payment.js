@@ -178,6 +178,8 @@ async function sendPhotosToAPI(photo1Url, photo2Url) {
 // add const system Id (for notify and send data to the right system of landlord)
 
 function savePayRequestData(msgObj, ResponeData, state) {
+    // debug: extract reponse and save to notification
+    console.log(`Process extract reponse format`);
     if (ResponeData) {
         let waterMeter ;
         let electricityMeter ;
