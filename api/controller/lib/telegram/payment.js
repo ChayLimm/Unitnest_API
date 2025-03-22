@@ -75,7 +75,7 @@ async function handlePhotoRequest(msgObj) {
                     );
                     state.step = 2; // Completed step for payment request
 
-                    // console.log("Received Both Photo:", state.photos);
+                    console.log("Received Both Photo:", state.photos);
     
                     // Use dummy data for testing
                     // const dummyData = [
@@ -93,13 +93,12 @@ async function handlePhotoRequest(msgObj) {
 
 
                     //Send photos to Flask API for processing
-                    
                     const responseData = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
                     if (!responseData) {
                         return sendMessage(msgObj, "Error processing payment request.");
                     }
 
-                    savePayRequestData(msgObj, responseData, state);   // Use dummy data for testing
+                    savePayRequestData(msgObj, responseData, state);  
                     delete paymentRequestSteps[chatId]; // Payment request complete
                     state.photos = [];   // Clear stored photos
 
