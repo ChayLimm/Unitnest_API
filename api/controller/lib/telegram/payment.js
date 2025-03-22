@@ -43,9 +43,11 @@ async function handlePhotoRequest(msgObj) {
         console.log("File ID:", fileId);
 
         try {
-            const photoDetails = await axiosInstance.get(
-                "getFile", {file_id: fileId}
-            ); // Get file/photo details from Telegram server
+            // const photoDetails = await axiosInstance.get(
+            //     "getFile", {file_id: fileId}
+            // ); // Get file/photo details from Telegram server
+
+            const photoDetails = await axiosInstance.get(`getFile?file_id=${fileId}`);
             
             if (photoDetails && photoDetails.data && photoDetails.data.result) {
                 const photoData = photoDetails.data.result;
@@ -78,7 +80,7 @@ async function handlePhotoRequest(msgObj) {
                     console.log("Received Both Photo:", state.photos);
 
                     // ✅ Process in background without waiting
-                    processPaymentRequest(chatId, msgObj, state);
+                    await processPaymentRequest(chatId, msgObj, state);
 
                     // Clean up stored request state
                     delete paymentRequestSteps[chatId];  
@@ -141,12 +143,10 @@ async function processPaymentRequest(chatId, msgObj, state) {
 
 
 async function sendPhotosToAPI(photo1Url, photo2Url) {
-    try {    
-        // console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
-
-        // Use Axios directly, request POST 
+    try {
+        console.log("📤 Sending payload to Flask API:", photo1Url, photo2Url);
         const response = await axios.post(
-            'https://8fcc-167-179-44-196.ngrok-free.app/process', 
+            'https://4ec7-117-20-112-36.ngrok-free.app/process', 
             { 
                 image_urls: [photo1Url, photo2Url] 
             },
@@ -155,22 +155,47 @@ async function sendPhotosToAPI(photo1Url, photo2Url) {
             }
         );
 
-        console.log("API Response:", response.data); // Debugging
-
-        if (response.status === 200) {
-            return response.data; // Return the JSON data from Flask API
-        } else {
-            console.error("Error: API request failed with status code", response.status);
-            return null;
-        }
+        console.log("✅ API Response:", response.data); // Debugging
+        return response.status === 200 ? response.data : null;
     } catch (error) {
-        console.error("Error sending photos to API:", error.message);
-        if (error.response) {
-            console.error("API Response Error:", error.response.data); // Debugging
-        }
+        console.error("❌ Error sending photos to API:", error.message);
+        if (error.response) console.error("🔴 API Response Error:", error.response.data);
         return null;
     }
 }
+
+
+// async function sendPhotosToAPI(photo1Url, photo2Url) {
+//     try {    
+//         // console.log("Sending payload to Flask API:",photo1Url, photo2Url); // Debugging
+
+//         // Use Axios directly, request POST 
+//         const response = await axios.post(
+//             'https://8fcc-167-179-44-196.ngrok-free.app/process', 
+//             { 
+//                 image_urls: [photo1Url, photo2Url] 
+//             },
+//             { 
+//                 headers: { 'Content-Type': 'application/json' } 
+//             }
+//         );
+
+//         console.log("API Response:", response.data); // Debugging
+
+//         if (response.status === 200) {
+//             return response.data; // Return the JSON data from Flask API
+//         } else {
+//             console.error("Error: API request failed with status code", response.status);
+//             return null;
+//         }
+//     } catch (error) {
+//         console.error("Error sending photos to API:", error.message);
+//         if (error.response) {
+//             console.error("API Response Error:", error.response.data); // Debugging
+//         }
+//         return null;
+//     }
+// }
 
 
 
