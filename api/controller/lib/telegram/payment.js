@@ -146,7 +146,7 @@ async function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
     try {
         console.log("📤 Sending payload to Flask API:", photo1Url, photo2Url);
         const response = await axios.post(
-            'https://4ec7-117-20-112-36.ngrok-free.app/process', 
+            'https://0cdf-117-20-112-36.ngrok-free.app/process', 
             { 
                 chat_id: chatId,
                 image_urls: [photo1Url, photo2Url] 
