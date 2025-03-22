@@ -15,6 +15,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// set server timeout
+
+
 app.get('/test', (req, res) => {
     res.send('hello');
 });

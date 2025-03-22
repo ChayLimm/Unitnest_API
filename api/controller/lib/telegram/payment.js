@@ -93,14 +93,29 @@ async function handlePhotoRequest(msgObj) {
 
 
                     //Send photos to Flask API for processing
-                    const responseData = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
-                    if (!responseData) {
-                        return sendMessage(msgObj, "Error processing payment request.");
-                    }
+                    // const responseData = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
+                    // if (!responseData) {
+                    //     return sendMessage(msgObj, "Error processing payment request.");
+                    // }
 
-                    savePayRequestData(msgObj, responseData, state);  
-                    delete paymentRequestSteps[chatId]; // Payment request complete
-                    state.photos = [];   // Clear stored photos
+                    // savePayRequestData(msgObj, responseData, state);  
+                    // delete paymentRequestSteps[chatId]; // Payment request complete
+                    // state.photos = [];   // Clear stored photos
+
+                      // ✅ Process the API request asynchronously
+                    setTimeout(async () => {
+                        const responseData = await sendPhotosToAPI(state.photos[0].fileUrl, state.photos[1].fileUrl);
+                        
+                        if (!responseData) {
+                            return sendMessage(msgObj, "Error processing payment request.");
+                        }
+
+                        savePayRequestData(msgObj, responseData, state);  
+                        delete paymentRequestSteps[chatId]; // Cleanup stored request data
+                        state.photos = [];   // Clear stored photos
+
+                        sendMessage(msgObj, "✅ Your payment request has been successfully processed.");
+                    }, 0); // Run asynchronously after response
 
                 }
             } else {
