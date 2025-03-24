@@ -38,7 +38,15 @@ async function handleCallbackQuery(callback_query) {
 
         case "help":
 
-            const helpInfo = `ℹ️ Help Info: \n\n`;
+            const helpInfo = `ℹ️ Help Information for UnitNest Bot: \n\n` + 
+                            `✅ Main Features:\n` + 
+                            `✍️ Register - Sign up as a tenant.\n` +
+                            `📤 Pay Now - Payment request, upload utility meter.\n` +
+                            `📜 Rules - View the rental terms and conditions.\n` +
+                            `🔵 Contact Us - Get in touch with landlord.\n\n` +
+                            `✅ Available Commands:\n` +
+                            `💡 \`/start\` – To stat the bot.\n` +
+                            `💡 \`/help\` – Show this help guide.\n\n`;
             return sendMessage(msgObj, helpInfo, [[ruleButton, contactButton], [helpButton]]);
 
         default:
@@ -89,8 +97,7 @@ async function handleMessage(messageObj) {
         if (!paymentRequestSteps[chatId] && !isRegistered && (messagePhoto || messageDoc)) {
             return sendMessage(
                 messageObj, 
-                "⚠️ You need to register first.\n\n👉 Type /start to begin.", 
-                [registerButton]
+                "⚠️ You need to register first before can process anything!.\n\n👉 Type /start to begin.", 
             );
 
         }else if (!paymentRequestSteps[chatId]&& (messagePhoto || messageDoc)) {
@@ -127,7 +134,7 @@ async function handleCommands(messageObj, command) {
                 return sendMessage(
                     messageObj,
                     `👋  Hello @${messageObj.from.username}, \n\n\tI am UnitNest Bot. Please register to continue!\n`,
-                    [registerButton]
+                    [registerButton, [helpButton]]
                 );
             }
         default:
