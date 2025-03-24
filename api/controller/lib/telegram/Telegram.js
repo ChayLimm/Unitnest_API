@@ -39,11 +39,13 @@ async function handleCallbackQuery(callback_query) {
         case "help":
 
             const helpInfo = `ℹ️ Help Information for UnitNest Bot: \n\n` + 
+                            `━━━━━━━━━━━━━━━━━━━━\n` + 
                             `✅ Main Features:\n` + 
                             `✍️ Register - Sign up as a tenant.\n` +
                             `📤 Pay Now - Payment request, upload utility meter.\n` +
                             `📜 Rules - View the rental terms and conditions.\n` +
                             `🔵 Contact Us - Get in touch with landlord.\n\n` +
+                            `━━━━━━━━━━━━━━━━━━━━\n` +  
                             `✅ Available Commands:\n` +
                             `💡 \`/start\` – To stat the bot.\n` +
                             `💡 \`/help\` – Show this help guide.\n\n`;
