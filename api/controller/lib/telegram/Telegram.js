@@ -80,14 +80,12 @@ async function handleMessage(messageObj) {
         }
 
         // // Ensure user is registered before allowing other interactions
-        if (!isRegistered && !registrationSteps[chatId]) {
+        if (!isRegistered && !registrationSteps[chatId] && !paymentRequestSteps[chatId]) {
             return sendMessage(
                 messageObj, 
-                "⚠️ You need to register first before you can proceed.\n\n👉 Type /start to begin.", 
-                [registerButton]
+                "⚠️ You need to register first before can process anything!.\n\n👉 Type /start to begin.", 
             );
         }
-
 
         // Handle Registration Steps
         if (registrationSteps[chatId]) {
