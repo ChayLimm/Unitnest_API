@@ -117,9 +117,7 @@ async function fetchRule(systemId) {
     // Extract the landlord settings
     const data = systemDoc.data();
     const rule = data.landlord?.settings?.rule || "No rule found.";
-
-    // format rule 
-    // const formatRule = rule.map((rule, index) => `✅ ${index + 1}. ${rule}`).join("\n");
+    
     return `📜 Here The Rule: \n\n\t${rule}`;
 
   } catch (error) {

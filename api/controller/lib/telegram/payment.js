@@ -76,11 +76,7 @@ async function handlePhotoRequest(msgObj) {
                         "Thank you! Your payment request is processing...!"
                     );
                     state.step = 2; // Completed step for payment request
-
                     console.log("Received Both Photo:", state.photos);
-
-                    // // ✅ Process in background without waiting
-                    // await processPaymentRequest(chatId, msgObj, state);
 
                     // send to flask api without await
                     sendPhotosToAPI(chatId, state.photos[0].fileUrl, state.photos[1].fileUrl);
@@ -149,6 +145,84 @@ function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
         console.error("Error sending photos to API:", error.message);
     }
 }
+
+// add system id for notify to correct system of landlord that own the system
+// add const system Id (for notify and send data to the right system of landlord)
+
+async function savePayRequestData(responeData) {
+    // debug: extract reponse and save to notification
+    console.log(`Process extract response format`);
+    
+    if (responeData) {
+        let waterMeter;
+        let electricityMeter;
+        let waterAccuracy;
+        let electricityAccuracy;
+        let photo1; 
+        let photo2;
+        let systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // sample systemId for testing
+        let dataType = "paymentRequest";
+        let status = "pending"; 
+
+        // Extract meter data
+        for (let i in responeData.meterData) {
+            let meter = responeData.meterData[i];
+
+            if (meter['Meter Type'] === 'Water') {
+                waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
+                waterAccuracy = parseFloat(meter['Accuracy']);
+            } else if (meter['Meter Type'] === 'Electricity') {
+                electricityMeter = parseFloat(meter['Meter Number']);
+                electricityAccuracy = parseFloat(meter['Accuracy']);
+            }
+        }
+
+
+        // Assign chatId and photo URLs from the response data
+        const chatId = responeData.chat_id.toString();
+        photo1 = responeData.url_1;
+        photo2 = responeData.url_2;
+
+        // Debug: check both urls in response
+        console.log(`URL 1: ${photo1}`);
+        console.log(`URL 2: ${photo2}`);
+
+        // Prepare the data payment request to JSON format
+        const payReqDataToStore = {
+            systemID: systemId,
+            chatID: chatId,
+            dataType: dataType,
+            read: false,
+            status: status,
+            isApprove: false,
+            notifyData: {
+                requestDateOn: new Date().toISOString(),
+                water: waterMeter,
+                electricity: electricityMeter,
+                waterAccuracy: waterAccuracy,
+                electricityAccuracy: electricityAccuracy,
+                photo1URL: photo1,
+                photo2URL: photo2
+            }
+        };
+
+        console.log('\nRetrieve Data From API after payment request is processed!!');
+        console.log(JSON.stringify(payReqDataToStore, null, 2));  
+
+        // Store to Firebase in the collection 'notification'
+        await storeNotification(systemId, payReqDataToStore);
+
+    } else {
+        console.error("No data received from the Flask API");
+    }
+}
+
+
+module.exports = {
+    handlePhotoRequest,
+    paymentRequestSteps,
+    savePayRequestData
+};
 
 
 // // ✅ Process API call in background (without blocking response)
@@ -226,92 +300,6 @@ function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
 //         return null;
 //     }
 // }
-
-
-
-// add system id for notify to correct system of landlord that own the system
-// add const system Id (for notify and send data to the right system of landlord)
-
-async function savePayRequestData(responeData) {
-    // debug: extract reponse and save to notification
-    console.log(`Process extract response format`);
-    
-    if (responeData) {
-        let waterMeter;
-        let electricityMeter;
-        let waterAccuracy;
-        let electricityAccuracy;
-        let photo1; 
-        let photo2;
-        let systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // sample systemId for testing
-        let dataType = "paymentRequest";
-        let status = "pending"; 
-
-        // Extract meter data
-        for (let i in responeData.meterData) {
-            let meter = responeData.meterData[i];
-
-            if (meter['Meter Type'] === 'Water') {
-                waterMeter = parseFloat(meter['Meter Number']); // Convert to float (double)
-                waterAccuracy = parseFloat(meter['Accuracy']);
-            } else if (meter['Meter Type'] === 'Electricity') {
-                electricityMeter = parseFloat(meter['Meter Number']);
-                electricityAccuracy = parseFloat(meter['Accuracy']);
-            }
-        }
-
-
-        // Assign chatId and photo URLs from the response data
-        const chatId = responeData.chat_id.toString();
-        photo1 = responeData.url_1;
-        photo2 = responeData.url_2;
-
-        // // Check if both URLs are present in the response
-        // console.log(`URL 1: ${photo1}`);
-        // console.log(`URL 2: ${photo2}`);
-
-        // // Check if the URLs exist before proceeding
-        // if (!photo1 || !photo2) {
-        //     console.error("Missing photo URLs in the response data");
-        //     return;
-        // }
-
-        // Prepare the data payment request to JSON format
-        const payReqDataToStore = {
-            systemID: systemId,
-            chatID: chatId,
-            dataType: dataType,
-            read: false,
-            status: status,
-            isApprove: false,
-            notifyData: {
-                requestDateOn: new Date().toISOString(),
-                water: waterMeter,
-                electricity: electricityMeter,
-                waterAccuracy: waterAccuracy,
-                electricityAccuracy: electricityAccuracy,
-                photo1URL: photo1,
-                photo2URL: photo2
-            }
-        };
-
-        console.log('\nRetrieve Data From API after payment request is processed!!');
-        console.log(JSON.stringify(payReqDataToStore, null, 2));  
-
-        // Store to Firebase in the collection 'notification'
-        await storeNotification(systemId, payReqDataToStore);
-
-    } else {
-        console.error("No data received from the Flask API");
-    }
-}
-
-
-module.exports = {
-    handlePhotoRequest,
-    paymentRequestSteps,
-    savePayRequestData
-};
 
 // function savePayRequestData(msgObj, ResponeData, state) {
 //     // debug: extract reponse and save to notification

@@ -11,7 +11,7 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
                 text: messageText,
                 reply_markup: JSON.stringify({ inline_keyboard: button }),
             });
-            console.log("Message sent:", response.data);
+            console.log("Message sent:", response.data);    // debug
         } else if (photo != null) {
             try {
                 console.log("Sending message with photo, photo URL:", photo);
@@ -20,7 +20,7 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
                     photo: photo, 
                     caption: messageText,
                 });
-                console.log("Photo sent:", response.data);
+                console.log("Photo sent:", response.data);  // debug
             } catch (error) {
                 console.error("Error sending photo:", error.response?.data || error.message);
             }
@@ -39,7 +39,7 @@ async function sendMessage(messageObj, messageText, button = null, photo = null)
                 chat_id: messageObj.chat.id,
                 text: messageText,
             });
-            console.log("Message sent:", response.data);
+            console.log("Message sent:", response.data);    // debug
         }
     } catch (error) {
         console.error("Error sending message:", error.message);

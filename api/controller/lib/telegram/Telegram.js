@@ -86,7 +86,7 @@ async function handleMessage(messageObj) {
         }
         
         // Handle cases where a tenant sends a photo without clicking "Pay Now"
-        if (!paymentRequestSteps[chatId] && !(messagePhoto || messageDoc)) {
+        if (!paymentRequestSteps[chatId] && (messagePhoto || messageDoc)) {
             return sendMessage(
                 messageObj,
                 "⚠️ Please click the 'Pay Now' button before sending payment photos.\n\n👉 Type /start.",
