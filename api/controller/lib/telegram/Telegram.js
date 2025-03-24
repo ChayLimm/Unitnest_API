@@ -42,8 +42,8 @@ async function handleCallbackQuery(callback_query) {
                             `━━━━━━━━━━━━━━━━━━━━\n` + 
                             `✅ Main Features:\n` + 
                             `✍️ Register - Sign up as a tenant.\n` +
-                            `📤 Pay Now - Payment request, upload utility meter.\n` +
-                            `📜 Rules - View the rental terms and conditions.\n` +
+                            `📤 Pay Now - Request payment, upload utilities meter.\n` +
+                            `📜 Rules - View the rental conditions.\n` +
                             `🔵 Contact Us - Get in touch with landlord.\n\n` +
                             `━━━━━━━━━━━━━━━━━━━━\n` +  
                             `✅ Available Commands:\n` +
@@ -80,9 +80,13 @@ async function handleMessage(messageObj) {
         }
 
         // // Ensure user is registered before allowing other interactions
-        // if (!isRegistered) {
-        //     return sendMessage(messageObj, "⚠️ You need to register first.\n\n👉 Type /start to begin.", [registerButton]);
-        // } 
+        if (!isRegistered) {
+            return sendMessage(
+                messageObj, 
+                "⚠️ You need to register first before you can proceed.\n\n👉 Type /start to begin.", 
+                [registerButton]
+            );
+        }
 
 
         // Handle Registration Steps
