@@ -53,8 +53,8 @@ async function handleMessage(messageObj) {
     const messagePhoto = messageObj.photo;
     const messageDoc = messageObj.document; // handle photo in case send as file (doc)
 
-    // const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
-    // const isRegistered = await checkTenantsRegistered(systemId, chatId);    // check if tenant has registered
+    const systemId = "MF3DBs9vbee9yw0jwfBjK9kIGXs2";  // use fix systemId for testing first
+    const isRegistered = await checkTenantsRegistered(systemId, chatId);    // check if tenant has registered
 
     console.log(messageObj);
 
@@ -86,7 +86,14 @@ async function handleMessage(messageObj) {
         }
         
         // Handle cases where a tenant sends a photo without clicking "Pay Now"
-        if (!paymentRequestSteps[chatId] && (messagePhoto || messageDoc)) {
+        if (!paymentRequestSteps[chatId] && !isRegistered && (messagePhoto || messageDoc)) {
+            return sendMessage(
+                messageObj, 
+                "⚠️ You need to register first.\n\n👉 Type /start to begin.", 
+                [registerButton]
+            );
+
+        }else if (!paymentRequestSteps[chatId]&& (messagePhoto || messageDoc)) {
             return sendMessage(
                 messageObj,
                 "⚠️ Please click the 'Pay Now' button before sending payment photos.\n\n👉 Type /start.",
