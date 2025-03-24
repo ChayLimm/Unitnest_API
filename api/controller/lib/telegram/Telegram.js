@@ -80,7 +80,7 @@ async function handleMessage(messageObj) {
         }
 
         // // Ensure user is registered before allowing other interactions
-        if (!isRegistered) {
+        if (!isRegistered && !registrationSteps[chatId]) {
             return sendMessage(
                 messageObj, 
                 "⚠️ You need to register first before you can proceed.\n\n👉 Type /start to begin.", 
