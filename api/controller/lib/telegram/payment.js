@@ -194,7 +194,7 @@ async function savePayRequestData(responeData) {
             dataType: dataType,
             read: false,
             status: status,
-            isApprove: false,
+            isApprove: true,
             notifyData: {
                 requestDateOn: new Date().toISOString(),
                 water: waterMeter,
