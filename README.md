@@ -1,163 +1,92 @@
-<!-- # UnitNest API
+# UnitNest Backend API
 
-## Overview
-UnitNest API is a Node.js backend service with HTTP AI model integration, designed for:
-- Real-time communication with AI models
-- Payment processing with timeout handling
-- System notifications and tenant management
-- Telegram bot integration
+## 🌐 Overview
+Node.js backend service for UnitNest - an automated rental room management system featuring:
+- Telegram bot integration for tenant communications
+- KHQR payment processing (Cambodia's QR standard)
+- AI-Based Model meter reading (Flask-YOLO integration)
+- Firebase-Firestore sync with Flutter apps
 
-## Technical Stack
-- **Runtime**: Node.js
-- **Hosting**: Vercel
-- **AI Integration**: HTTP API connections
-- **Payment Processing**: KHQR standard
-- **Configuration**: 
-  - `vercel.json` for deployment settings
-  - `package.json` with debug timeouts
+## 🚀 Key Features
 
-## API Endpoints
-
-### Core Endpoints
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/telegram` | POST | Telegram bot webhook |
-| `/aimodel` | POST | AI model integration |
-
-### Payment Endpoints
-| Endpoint | Method | Description | Timeout |
-|----------|--------|-------------|---------|
-| `/khqr` | POST | Process KHQR payments | 30s |
-| `/khqrstatus` | POST | Check payment status | 15s |
-
-## Setup Instructions
-
-### 1. Environment Configuration
-```bash
-cp .env.example .env
-# Fill in your environment variables -->
-
-
-
-<!-- # UnitNest API
-
-## Overview
-UnitNest API is a Node.js backend service with:
-- Firebase integration for data storage
-- Telegram bot webhook handling
-- AI model processing endpoints
-- KHQR payment processing
-- Tenant management system
-
-## Features
-- **Real-time Notifications**: Firebase-powered notification system
-- **Tenant Verification**: Check registration status via chat ID
-- **Payment Processing**: KHQR payment integration with status tracking
-- **Rule Management**: Fetch landlord rules dynamically
-- **Contact System**: Retrieve landlord contact information
-- **AI Integration**: Process and store AI model responses
-
-## Technical Stack
-- **Backend**: Node.js + Express
-- **Database**: Firebase Firestore
-- **Authentication**: Firebase Admin + JWT
-- **Hosting**: Vercel
-- **Integrations**:
-  - Telegram Bot API
-  - KHQR Payment System
-  - Custom AI Models
-
-## API Endpoints
-
-### Core Services
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/test` | GET | Health check |
-| `/testAPI` | POST | Testing endpoint |
-| `/telegram` | POST | Telegram webhook handler |
-
-### Payment Services
-| Endpoint | Method | Description | Parameters |
-|----------|--------|-------------|------------|
-| `/khqr` | POST | Process KHQR payment | Payment data |
-| `/khqrstatus` | POST | Check payment status | `md5` (required) |
-
-### AI Integration
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/aimodel` | POST | Process AI model responses |
-
-## Firebase Integration
-
-### Configuration
-```javascript
-{
-  type: process.env.SERVICE_ACCOUNT_TYPE,
-  project_id: process.env.SERVICE_ACCOUNT_PROJECT_ID,
-  private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  client_email: process.env.SERVICE_ACCOUNT_CLIENT_EMAIL
-  // ...other config
-} -->
-
-
-# UnitNest API
-
-## 📌 Overview
-UnitNest API is a robust Node.js backend service that handles:
-- Telegram bot communication 
-- Flutter mobile applications support with send remind to tenant via 
-- AI model integration 
-- Payment processing 
-
-Built with Express.js and deployed on Vercel, this API serves as the central hub for your UnitNest ecosystem.
-
-## 🌟 Key Features
-
-### 🤖 Telegram Bot Integration
-- Real-time message processing via webhook
-- Tenant registration then comfirmation from landlord flutter app
-- Notification management system: registeration notify and make payment request (send water&electricty meter) to flutter app by sync those notify to firebase -> then system refresh will see those new notify 
-
-### 📱 Flutter App Backend Support
-- Dedicated API endpoints for:
-  - Payment processing
-  - Notification updates
+### 🤖 Telegram Integration
+- Tenant registration & verification
+- Payment request handling -> Meter reading photo processing
+- Automated reminders from landlord system
 
 ### 💰 Payment Processing
-- KHQR payment gateway integration
+- KHQR payment generation
 - Transaction status tracking
 
-### 🧠 AI Model Integration
-- HTTP endpoint for model Processing 
+### 🔌 API Endpoints
 
-
-## 🛠 Technical Stack
-
-| Component               | Technology                          |
-|-------------------------|-------------------------------------|
-| Backend Framework       | Express.js                          |
-| Database                | Firebase Firestore                  |
-| Authentication          | Firebase Admin                      |
-| Hosting Platform        | Vercel                              |
-| Payment Gateway         | KHQR Standard                       |
-| Environment Management  | dotenv                              |
-
-## 🔌 API Endpoints
-
-### Core Endpoints
 | Endpoint       | Method | Description                          | Parameters               |
 |----------------|--------|--------------------------------------|--------------------------|
-| `/telegram`    | POST   | Telegram bot webhook processor       | Telegram Update object   |
+| `/telegram`    | POST   | Telegram webhook handler             | Telegram Update object   |
+| `/khqr`        | POST   | Generate KHQR payment (Timeout: 30s) | Payment data             |
+| `/khqrstatus`  | POST   | Check payment status (Timeout: 15s)  | `md5` transaction hash   |
+| `/aimodel`     | POST   | Process meter readings (OCR)         | Image Url + tenant data  |
 
-### Payment Endpoints
-| Endpoint         | Method | Description                     | Requirements              |
-|------------------|--------|---------------------------------|---------------------------|
-| `/khqr`          | POST   | Process KHQR payments           | Payment data object       |
-| `/khqrstatus`    | POST   | Check payment status            | `md5` transaction hash    |
 
-### AI Integration
-| Endpoint       | Method | Description                          |
-|----------------|--------|--------------------------------------|
-| `/aimodel`     | POST   | Process AI-Based model predictions         |
+## 🛠 Tech Stack
 
-## 🔥 Firebase Integration
+| Component        | Technology                       |
+|------------------|----------------------------------|
+| Backend          | Node.js + Express.js             |
+| Database         | Firebase Firestore               |
+| Authentication   | Firebase Admin                   |
+| Payment Gateway  | KHQR Standard                    |
+| Hosting          | Vercel(Production)/Ngrok(Local)  |
+| AI Integration   | Flask + YOLO (Python)            |
+
+## 🚀 Quick Deployment
+```bash
+# Clone repository
+git clone https://github.com/ChayLimm/Unitnest_API.git
+cd Unitnest_API
+
+# Install dependencies
+npm install
+
+# Start Server , also need to Configure environment (see below)
+npm start
+
+## ⚙️ Environment Configuration
+
+### 1. Create Configuration File
+Create a new file named `.env` in your project root folder.
+
+### 2. Required Credentials
+Copy this template into your `.env` file and replace the placeholder values:
+
+```env
+# ━━━━━━━━━━━━━━━━━━━━━━
+#      TELEGRAM BOT
+# ━━━━━━━━━━━━━━━━━━━━━━
+BOT_TOKEN=your_telegram_bot_token
+PORT=4040
+
+# ━━━━━━━━━━━━━━━━━━━━━━
+#        KHQR PAYMENT
+# ━━━━━━━━━━━━━━━━━━━━━━
+KHQR_TOKEN=your_jwt_token_from_khqr
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━
+#       FIREBASE ADMIN
+# ━━━━━━━━━━━━━━━━━━━━━━
+SERVICE_ACCOUNT_TYPE=service_account
+SERVICE_ACCOUNT_PROJECT_ID=your_project_id
+SERVICE_ACCOUNT_PRIVATE_KEY_ID=your_private_key_id
+SERVICE_ACCOUNT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+SERVICE_ACCOUNT_CLIENT_EMAIL=your_service_account_email
+SERVICE_ACCOUNT_CLIENT_ID=your_client_id
+SERVICE_ACCOUNT_AUTH_URI=https://accounts.google.com/o/oauth2/auth
+SERVICE_ACCOUNT_TOKEN_URI=https://oauth2.googleapis.com/token
+SERVICE_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+SERVICE_ACCOUNT_CLIENT_X509_CERT_URL=https://www.googleapis.com/...x509/...
+SERVICE_ACCOUNT_UNIVERSE_DOMAIN=googleapis.com
+
+
+
+
