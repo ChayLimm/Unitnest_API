@@ -129,7 +129,7 @@ function sendPhotosToAPI(chatId, photo1Url, photo2Url) {
 
         // Send the POST request without waiting for the response
         axios.post(
-            'https://3637-167-179-44-196.ngrok-free.app/process',
+            'https://3a87-203-95-199-47.ngrok-free.app/process',
             {   
                 chat_id: chatId,
                 image_urls: [photo1Url, photo2Url] 
